@@ -3,7 +3,7 @@ class Stream {
   PVector[] crossStream;
   boolean isCrossed = false, ZA;
   color c;
-  int step = 0, pxl = 8;
+  int step = 0, pxl = 8, pollution = 0;
   float x, y, z;
   Stream (float x_, float y_, float z_, color col, boolean isZAxis, boolean hasAngle) {
     stream = new ArrayList <PVector>();
@@ -60,6 +60,7 @@ class Stream {
       fill(radWaste);
       box(pxl);
       popMatrix();
+      if(index == 0)pollution ++; 
     }
   }
   void crossingStream(Stream s1, Stream s2) {

@@ -44,14 +44,12 @@ class Stream {
     }
     endShape();
     PVector p = stream.get(step % stream.size());
-    for ( int i = 0; i < 5; i++) {
       pushMatrix();
       translate(p.x, p.y, p.z);
       noStroke();
       fill(c);
-      box(pxl);
+      //box(pxl);
       popMatrix();
-    }
     if (isCrossed) {
       int index = step % crossStream.length;
       pushMatrix();
@@ -60,7 +58,7 @@ class Stream {
       fill(radWaste);
       box(pxl);
       popMatrix();
-      if(index == 0)pollution ++; 
+      if(index == 0)pollution++; 
     }
   }
   void crossingStream(Stream s1, Stream s2) {

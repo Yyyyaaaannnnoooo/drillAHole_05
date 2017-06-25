@@ -1,12 +1,14 @@
+import peasy.*;
+PeasyCam cam;
 Stream waterStream;
 Stream drill;
 Lake lake;
 float terrain[][];
 int cell = 10;
 int r = 200;
-int cols, rows, w = 800, h = 900, count = 0, drillDeeper = -50, drillDepth = -450;
+int cols, rows, w = 800, h = 900, count = 0, drillDeeper = -50, drillDepth = -350;
 float lakeX, lakeY;
-float waterDepth = -300;
+float waterDepth = -200;
 color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0);
 boolean bottom = false;
 void settings() {
@@ -22,6 +24,7 @@ void setup() {
   waterStream = new Stream(lakeX, lakeY, waterDepth, water, false, true);
   drill = new Stream(lakeX, lakeY - 300, -50, color(255, 0, 0), true, true);
   lake = new Lake (lakeX, lakeY, r);
+  cam = new PeasyCam(this, 1000);
 }
 void draw() {
   lights();
@@ -86,7 +89,7 @@ void facility(float x, float y, float z, float ww, float hh, float dd, color c, 
 }
 
 void worldRotation() {
-  translate(width / 2, height / 2.3);
+  //translate(width / 2, height / 2.3);
   rotateX(PI / 3);
   rotateZ( -PI / 3);
   translate(-w / 2, -h / 2);
@@ -95,7 +98,7 @@ void world() {
   color grass = color(10, 255, 50);
   color land = color(180, 100, 10);
   noFill();
-  ortho();
+  //ortho();
   background(0);
   worldRotation();
   beginShape(QUAD);

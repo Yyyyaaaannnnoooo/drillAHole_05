@@ -4,29 +4,48 @@ class Stream {
   boolean isCrossed = false, ZA;
   color c;
   int step = 0, pxl = 8, pollution = 0;
-  float x, y, z;    
-  boolean bottom = false;
-  Stream (float x_, float y_, float z_, color col, boolean isZAxis, boolean hasAngle) {
+  int x, y, z, x1, y1, z1, x2, y2, z2;
+  Stream (int x1_, int y1_, int z1_, int x2_, int y2_, int z2_, color col) {
+    stream = new ArrayList <PVector>();
+    x1 = x1_;
+    y1 = y1_;
+    z1 = z1_;
+    x2 = x2_;
+    y2 = y2_;
+    z2 = z2_;
+    ///making streams with "elbows"
+    ///calculating the midpoint with some offset
+    float d = abs(y2 - y1);
+    int midPoint = int(d * random(0.15, 0.85));
+    c = col;
+    for (int i = y1; i < midPoint; i += 5) {
+      stream.add(new PVector(x1, i, z1));
+    }
+    for (int i = x1; i < x2; i += 5) {
+      stream.add(new PVector(i, midPoint, z1));
+    }
+    for (int i = midPoint; i < y2; i += 5) {
+      stream.add(new PVector(x2, i, z1));
+    }
+    for (int i = z1; i < 0; i += 5) {
+      stream.add(new PVector(x2, y2, i));
+    }
+  }
+
+  Stream (int x_, int y_, int z_, color col) {
     stream = new ArrayList <PVector>();
     x = x_;
     y = y_;
     z = z_;
-    ZA = isZAxis;
-    if (isZAxis == false) {
-      for (float i = 0; i < y; i += 5) {
-        stream.add(new PVector(x, i, z));
-      }
-    }
-    if (hasAngle || ZA) {
-      for (float i = z; i < 0; i += 5) {
-        stream.add(new PVector(x, y, i));
-      }
-    }
     c = col;
+    for (int i = z; i < 0; i += 5) {
+      stream.add(new PVector(x, y, i));
+    }
   }
   void update() {
     step++;
   }
+
   void show() {
     stroke(c);
     noFill();
@@ -38,14 +57,13 @@ class Stream {
     }
     endShape();
     PVector p = stream.get(step % stream.size());
-      pushMatrix();
-      translate(p.x, p.y, p.z);
-      noStroke();
-      fill(c);
-      //box(pxl);
-      popMatrix();
+    pushMatrix();
+    translate(p.x, p.y, p.z);
+    noStroke();
+    fill(c);
+    //box(pxl);
+    popMatrix();
     if (isCrossed) {
-      println("YEAH");
       int index = step % crossStream.length;
       pushMatrix();
       translate(crossStream[index].x, crossStream[index].y, crossStream[index].z);
@@ -53,17 +71,19 @@ class Stream {
       fill(radWaste);
       box(pxl);
       popMatrix();
-      if(index == 0)pollution++; 
+      if (index == 0)pollution++;//this has to be improved
     }
   }
-  void drillDrill(int posX, int posY,int d){
-      if (ZA && bottom == false) {
-      stream = new ArrayList <PVector>(0);
-      for (float i = d; i < 0; i += 5) {
-        stream.add(new PVector(posX, posY, i));
-      }
+
+  ///Drilling function 
+  void drillDrill(int posX, int posY, int d) {
+    stream = new ArrayList <PVector>(0);
+    for (float i = d; i < 0; i += 5) {
+      stream.add(new PVector(posX, posY, i));
     }
   }
+
+  ///function that generates a new path when to streams are crossing///
   void crossingStream(Stream s1, Stream s2) {
     int s1End = 0, s2Begin = 0;
     for (int i = 0; i < s1.stream.size(); i++) {

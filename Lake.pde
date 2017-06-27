@@ -1,8 +1,14 @@
 class Lake {
-  float posX, posY;
+  Stream [] waterStream;
+  int posX, posY;
   int radius;
+  float waterDepth = -200;
   color c1, c2;
-  Lake(float x, float y, int r) {
+  Lake(int x, int y, int r) {
+    waterStream = new Stream [10];
+    for (int i = 0; i < waterStream.length; i++) {
+      waterStream[i] = new Stream(int(random(0, x * 2)), int(random(0, 100)), round(-25 * random(i + 1))/*int(random(-120, -250))*/, x, y, 0, water);
+    }
     posX = x;
     posY = y;
     radius = r;
@@ -10,8 +16,14 @@ class Lake {
   void update(int step) {
     float amp = map(step, 0, 5, 0, 1);
     c1 = lerpColor(water, radWaste, amp);
+    for (int i = 0; i < waterStream.length; i++) {
+      waterStream[i].update();
+    }
   }
   void show() {
+    for (int i = 0; i < waterStream.length; i++) {
+      waterStream[i].show();
+    }
     float inc = 0.035;
     float xOff = 0;
     pushMatrix();

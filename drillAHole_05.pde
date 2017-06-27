@@ -1,12 +1,9 @@
 import peasy.*;
 PeasyCam cam;
 Terrain terrain;
-Stream waterStream;
 //float terrain[][];
-int cell = 20;
 int r = 200;
 int count = 0;
-float waterDepth = -200;
 color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0), 
       grass = color(10, 255, 50), land = color(180, 100, 10);
 void settings() {
@@ -15,7 +12,6 @@ void settings() {
 void setup() {
   background(0); 
   terrain = new Terrain();
-  waterStream = new Stream(terrain.lakeX, terrain.lakeY, waterDepth, water, false, true);
   cam = new PeasyCam(this, 1000);
 }
 void draw() {
@@ -23,8 +19,6 @@ void draw() {
   terrain.update();
   terrain.show();
   //worldRotation();
-  waterStream.update();
-  waterStream.show(); 
   //LAKE should have it's own stream//
   //also adriller with it's own stream//
   

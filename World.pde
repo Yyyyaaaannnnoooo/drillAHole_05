@@ -7,6 +7,7 @@ class World {
   int cols, rows, w = 800, h = 900;
   int posX = 0, posY = 0, cell = 10;
   int drillDeeper = -50, drillDepth = -350, actualStream = 0;
+  float wave = 0, waveCount;
   boolean isDrilling = false;
   boolean bottom = false;
   World() {
@@ -40,6 +41,7 @@ class World {
       //e.applyForce(force);
       e.update();
     }
+    waveCount += 0.05;
     //if (drill != null) {
     //  Stream d = drill.get(actualStream);
     //  d.drillDrill(posX * cell, posY * cell, drillDeeper);
@@ -82,12 +84,21 @@ class World {
         float steepness = map(index, 0, rows * cols, 25, 0);
         float n = map(noise(xOff, yOff), 0, 1, 0, steepness);
         float amp = noise(xOff, yOff) > 0.5 ? 0 : 1;
-        strokeWeight(1);
         color c = lerpColor(land, grass, amp);
         noStroke();
         //stroke(c);
-        fill(c);
-        vertex(x * cell, y * cell, n);
+        //drawing the lake and a wavy texture
+        float d1 = dist(x, y, cols * 0.5, rows * 0.75);
+        float d2 = dist(x, y, cols * 0.35, rows * 0.8);
+        float d3 = dist(x, y, cols * 0.65, rows * 0.7);
+        if (d1 < 15 || d2 < 8 || d3 < 10) {
+          fill(water);
+          wave = map(sin(waveCount), -1, 1, -0.5, 0.5);
+        } else {
+          fill(c);
+          wave = 1;
+        }
+        vertex(x * cell, y * cell, n * wave);
         vertex(x * cell, (y + 1) * cell, n);
         vertex((x + 1) * cell, (y + 1) * cell, n);
         //vertex((x + 1) * cell, y  * cell, n);
@@ -96,7 +107,7 @@ class World {
       yOff += inc;
     }
     endShape();
-    lake.show();   
+    //lake.show();   
     i.show();
     for (Particle part : p) {
       part.show();

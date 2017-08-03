@@ -17,10 +17,14 @@ class Icon {
     }
   }
   void show() {
+    imageMode(CENTER);
+    float [] angles = cam.getRotations();
+    println(angles);
     pushMatrix();
-    translate(pos.x, pos.y, icon.height);
+    translate(pos.x, pos.y, icon.height / 2);
     rotateX(HALF_PI);
     rotate(PI);
+    rotateY(radians(-30) + map(angles[2], -PI, PI, 0, TWO_PI));
     fill(255);
     image(icon, 0, 0);
     popMatrix();

@@ -1,6 +1,5 @@
 class World {
-  Lake lake;
-  Icon i;
+  ArrayList <Icon> icon = new ArrayList <Icon>();
   Particle [] p;
   Electron[] el;
   int lakeX, lakeY;
@@ -10,13 +9,15 @@ class World {
   float wave = 0, waveCount;
   boolean isDrilling = false;
   boolean bottom = false;
+  //Check all the lake references
   World() {
     cols = w / cell;
     rows = h / cell;
     lakeX = w / 2;
-    lakeY = int(h * 0.75);    
-    lake = new Lake (lakeX, lakeY, r);
-    i = new Icon(lakeX, 100);
+    lakeY = int(h * 0.75);
+    for (int i = 0; i < 10; i++) {
+      icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows)) * cell));
+    }
     //float posX, float posY, float posZ, float trX, float trY, float trZ
     p = new Particle[30];
     for (int i = 0; i < p.length; i++) {
@@ -107,8 +108,9 @@ class World {
       yOff += inc;
     }
     endShape();
-    //lake.show();   
-    i.show();
+    for (Icon i : icon) {
+      i.show();
+    }
     for (Particle part : p) {
       part.show();
     }

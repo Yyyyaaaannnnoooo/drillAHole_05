@@ -1,5 +1,8 @@
 class World {
   Lake lake;
+  Icon i;
+  Particle [] p;
+  Electron[] el;
   int lakeX, lakeY;
   int cols, rows, w = 800, h = 900;
   int posX = 0, posY = 0, cell = 10;
@@ -11,10 +14,35 @@ class World {
     rows = h / cell;
     lakeX = w / 2;
     lakeY = int(h * 0.75);    
-    lake = new Lake (lakeX, lakeY, r);       
+    lake = new Lake (lakeX, lakeY, r);
+    i = new Icon(lakeX, 100);
+    //float posX, float posY, float posZ, float trX, float trY, float trZ
+    p = new Particle[10];
+    for (int i = 0; i < p.length; i++) {
+      float angle = map( i, 0, p.length, 0, TWO_PI);
+      float x = lakeX + (cos(angle) * random(0, r / 5));
+      float y = lakeY + (sin(angle) * random(0, r / 5));
+      p[i] = new Particle(x, y, random(0, 200), lakeX, lakeY, 50);
+    }
+    //electrons
+    el = new Electron[13];
+    for (int i = 0; i < el.length; i++) {
+      float angle = map(i, 0, el.length, 0, TWO_PI);
+      float x = lakeX + (cos(angle) * random(r * .75, r));
+      float y = lakeY + (sin(angle) * random(r * .75, r));
+      el[i] = new Electron(5.0, x, y, random(0, 200), lakeX, lakeY, 50);
+    }
   }
 
   void update() {
+    for (Particle part : p) {
+      part.update();
+    }
+    for (Electron e : el) {
+      PVector force = e.attract(e);
+      e.applyForce(force);
+      e.update();
+    }
     //if (drill != null) {
     //  Stream d = drill.get(actualStream);
     //  d.drillDrill(posX * cell, posY * cell, drillDeeper);
@@ -71,7 +99,14 @@ class World {
       yOff += inc;
     }
     endShape();
-    lake.show();    
+    lake.show();   
+    i.show();
+    for (Particle part : p) {
+      part.show();
+    }
+    for (Electron e : el) {
+      e.show();
+    }
     //if (drill != null) {
     //  for (Stream d : drill) {
     //    d.show();

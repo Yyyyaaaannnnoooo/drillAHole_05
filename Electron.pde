@@ -5,23 +5,25 @@ class Electron {
   PVector velocity;
   PVector acceleration;
   float mass, G = .4;
-  int count = 0, TX, TY;
-  PVector[] trail = new PVector[50];
-  Electron(float m, float x, float y, float z, int targetX, int targetY) {
+  int count = 0;
+  float TX, TY, TZ;
+  PVector[] trail = new PVector[25];
+  Electron(float m, float x, float y, float z, float targetX, float targetY, float targetZ) {
     mass = m;
     position = new PVector(x, y, z);
     velocity = new PVector(1, 0);   // Arbitrary starting velocity
     acceleration = new PVector(0, 0);
     TX = targetX; 
     TY = targetY;
+    TZ = targetZ;
   }
   PVector attract(Electron e) {
-    PVector target = new PVector(TX, TY, 0);
-    PVector force = PVector.sub(target, e.position);    // Calculate direction of force
-    float d = force.mag();                              // Distance between objects
-    d = constrain(d, 0, 2.0);                                       // Limiting the distance to eliminate "extreme" results for very close or very far objects
+    PVector target = new PVector(TX, TY, TZ);
+    PVector force = PVector.sub(target, e.position);   // Calculate direction of force
+    float d = force.mag();                            // Distance between objects
+    d = constrain(d, 0, 2.0);                        // Limiting the distance to eliminate "extreme" results for very close or very far objects
     float strength = (G * mass * 2) / (d * d);      // Calculate gravitional force magnitude
-    force.setMag(strength);                              // Get force vector --> magnitude * direction
+    force.setMag(strength);                        // Get force vector --> magnitude * direction
     return force;
   }
   // Newton's 2nd Law (F = M*A) applied
@@ -51,8 +53,9 @@ class Electron {
     }
     translate(position.x, position.y, position.z); 
     noStroke(); 
-    color c = color(155, 155, 0); 
-    pixelCircle(0, 0, c); 
+    color c = color(155, 0, 0); 
+    fill(c);
+    box(8);
     popMatrix();
   }
 }

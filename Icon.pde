@@ -2,42 +2,55 @@ class Icon {
   PImage[] dancingGuy = new PImage[2];
   boolean isDancing = false, hitted = false;
   PImage icon;
-  int hitCounter = 0, step = 0;
+  int hitCounter = 0, step = 0, health = 3;
   PVector pos;
-  Icon(int i, float posX, float posY) {
-    icon = loadImage("icon_"+i+".png");
+  Icon(float posX, float posY) {
+    String path = dataPath("") + "/icons";
+    String[] filenames = listFileNames(path);
     pos = new PVector(posX, posY);
-    if (i == 2) {
-      isDancing =true;
-      ///need to correct this whan changing the icons name
-      for (int j = 0; j < dancingGuy.length; j++) {
-        int index = j + 2;
-        dancingGuy[j] = loadImage("icon_"+index+".png");
-      }
-    }
+    icon = loadIcon(filenames[floor(random(1, filenames.length - 1))]);
   }
   void update(Particle p) {
     float d = pos.dist(p.pos);
     if (d < 25) {
-      hitted = true;
+      health--;
     }
   }
   void show() {
-    color alive = color(255);
-    color dead = color(0, 255, 0);
-    if (hitted) {
-      tint(dead);
+    pushMatrix();
+    translate(pos.x, pos.y, icon.height);
+    rotateX(HALF_PI);
+    rotate(PI);
+    fill(255);
+    image(icon, 0, 0);
+    popMatrix();
+  }
+
+  // This function returns all the files in a directory as an array of Strings  
+  String[] listFileNames(String dir) {
+    File file = new File(dir);
+    if (file.isDirectory()) {
+      String names[] = file.list();
+      return names;
     } else {
-      tint(alive);
+      // If it's not a directory
+      return null;
     }
-    imageMode(CENTER);
-    if (isDancing) {
-      image(dancingGuy[step % dancingGuy.length], pos.x, pos.y);
-      if (frameCount % 15 == 0) {
-        step++;
+  }
+  //function to load binary and return an image
+  PImage loadIcon(String binToLoad) {
+    String[] loadedIcon = loadStrings(dataPath("") + "/icons/" + binToLoad);
+    int num = 50;
+    PImage img = createImage(num, num, ARGB);
+    img.loadPixels();
+    for (int x = 0; x < img.width; x ++) {
+      for (int y = 0; y < img.height; y ++) {
+        int index = x + img.width * y;
+        //if(int(loadedIcon[index]) == 0)img.pixels[index] = color(255, 255);
+        img.pixels[index] = int(loadedIcon[index]) == 0 ? color(255, 255) : color(0, 0);
       }
-    } else {
-      image(icon, pos.x, pos.y);
     }
+    img.updatePixels();
+    return img;
   }
 }

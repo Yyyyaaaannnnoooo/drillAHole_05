@@ -17,7 +17,7 @@ class World {
     lake = new Lake (lakeX, lakeY, r);
     i = new Icon(lakeX, 100);
     //float posX, float posY, float posZ, float trX, float trY, float trZ
-    p = new Particle[10];
+    p = new Particle[30];
     for (int i = 0; i < p.length; i++) {
       float angle = map( i, 0, p.length, 0, TWO_PI);
       float x = lakeX + (cos(angle) * random(0, r / 5));
@@ -25,12 +25,9 @@ class World {
       p[i] = new Particle(x, y, random(0, 200), lakeX, lakeY, 50);
     }
     //electrons
-    el = new Electron[13];
+    el = new Electron[7];
     for (int i = 0; i < el.length; i++) {
-      float angle = map(i, 0, el.length, 0, TWO_PI);
-      float x = lakeX + (cos(angle) * random(r * .75, r));
-      float y = lakeY + (sin(angle) * random(r * .75, r));
-      el[i] = new Electron(5.0, x, y, random(0, 200), lakeX, lakeY, 50);
+      el[i] = new Electron(random(TWO_PI), random(TWO_PI), lakeX, lakeY, 50, 150, 50);
     }
   }
 
@@ -39,8 +36,8 @@ class World {
       part.update();
     }
     for (Electron e : el) {
-      PVector force = e.attract(e);
-      e.applyForce(force);
+      //PVector force = e.attract(e);
+      //e.applyForce(force);
       e.update();
     }
     //if (drill != null) {

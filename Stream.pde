@@ -98,6 +98,9 @@ class Stream {
         }
       }
     }
+    ///here we create a new array of vectors containing
+    ///all the positions of the crossed streams
+    ///try it with arrayCopy();
     int numVec = s1End + (s2.stream.size() - s2Begin);
     crossStream = new PVector[numVec];
     for (int i = 0; i < crossStream.length; i++) {

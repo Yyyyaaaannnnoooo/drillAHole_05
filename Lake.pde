@@ -34,9 +34,10 @@ class Lake {
       float n = map(noise(xOff), 0, 1, 0.5, 1);
       float x = posX + (cos(a) * (radius + (radius / 5)) * n);
       float y = posY + (sin(a) * radius * n);
-      float amp = map(angle, 0, 200, 0, 1);
-      c2 = lerpColor(water, c1, amp);
-      fill(c2);
+      //here to visually show the pollution of the lake
+      //float amp = map(angle, 0, 200, 0, 1);
+      //c2 = lerpColor(water, c1, amp);
+      fill(water);
       vertex(x, y);
       xOff += inc;
     }

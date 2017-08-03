@@ -1,7 +1,7 @@
 import peasy.*;
 PeasyCam cam;
-Terrain terrain;
-//float terrain[][];
+World world;
+//float world[][];
 int r = 200;
 int count = 0;
 color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0), 
@@ -11,30 +11,30 @@ void settings() {
 }
 void setup() {
   background(0); 
-  terrain = new Terrain();
+  world = new World();
   cam = new PeasyCam(this, 1000);
 }
 void draw() {
   lights();
-  terrain.update();
-  terrain.show();
+  world.update();
+  world.show();
   //worldRotation();
   //LAKE should have it's own stream//
   //also adriller with it's own stream//
   
-  /////ADD ALL THIS TO TERRAIN/////
-  facility(terrain.lakeX, terrain.lakeY - 300, terrain.drillDepth, 150, 350, 50, color(0), true);
+  /////ADD ALL THIS TO world/////
+  facility(world.lakeX, world.lakeY - 300, world.drillDepth, 150, 350, 50, color(0), true);
   //facility(lakeX, lakeY - 300, drillDepth, 150, 350, 40, radWaste, true);
-  facility(terrain.lakeX + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
-  //facility(terrain.lakeX, terrain.lakeY - 300, 100 / 2, 50, 50, 100, color(255, 0, 0), true);
+  facility(world.lakeX + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
+  //facility(world.lakeX, world.lakeY - 300, 100 / 2, 50, 50, 100, color(255, 0, 0), true);
   beginShape();
   noFill();
   stroke(155);
   strokeWeight(10);
-  vertex(terrain.lakeX + 200, 120 / 2, 0);
-  vertex(terrain.lakeX + 200, 120 / 2, terrain.drillDepth);
-  vertex(terrain.lakeX - 50, 120 / 2, terrain.drillDepth);
-  vertex(terrain.lakeX - 50, terrain.lakeY - 275 - (350 / 2), terrain.drillDepth);
+  vertex(world.lakeX + 200, 120 / 2, 0);
+  vertex(world.lakeX + 200, 120 / 2, world.drillDepth);
+  vertex(world.lakeX - 50, 120 / 2, world.drillDepth);
+  vertex(world.lakeX - 50, world.lakeY - 275 - (350 / 2), world.drillDepth);
   endShape();
   count++;
   //int posX = (int)map(mouseX, 0, width, 0, w);
@@ -46,7 +46,7 @@ void draw() {
 }
 
 void mouseClicked() {
-  terrain.mouseClicked();
+  world.mouseClicked();
   //drillDeeper -= 50;
   //if (drillDeeper < drillDepth) {
   //  drillDeeper = drillDepth;
@@ -57,7 +57,7 @@ void mouseClicked() {
 
 void keyPressed() {
   //if (key == 'r')drillDeeper = -50;
-  terrain.keyPressed();
+  world.keyPressed();
 }
 
 void facility(float x, float y, float z, float ww, float hh, float dd, color c, boolean isFill) {
@@ -72,5 +72,16 @@ void facility(float x, float y, float z, float ww, float hh, float dd, color c, 
   }
   translate(x, y, z);
   box(ww, hh, dd);
+  popMatrix();
+}
+
+void pixelCircle( float x, float y, color c) {
+  pushMatrix();
+  noStroke();
+  fill(c);
+  rectMode(CENTER);
+  for ( int i = 0; i < 2; i++) {
+    rect(x, y, 10 + (i * 10), 20 - (i * 10));
+  }
   popMatrix();
 }

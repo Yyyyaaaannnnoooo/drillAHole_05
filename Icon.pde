@@ -1,22 +1,26 @@
 class Icon {
   PImage[] dancingGuy = new PImage[2];
-  boolean isDancing = false, hitted = false;
+  boolean dead = false, hitted = false;
   PImage icon;
+  PImage emotion;
   int hitCounter = 0, step = 0, health = 3;
+  private int deadCounter = 60;
   PVector pos;
+  private String fileName = "", directory = dataPath("")+"/emotions/";;
   Icon(float posX, float posY) {
-    String path = dataPath("") + "/icons";
-    String[] filenames = listFileNames(path);
+    //load icons
+    String pathIcon = dataPath("") + "/icons";
+    String[] filenames = listFileNames(pathIcon);
+    icon = loadIcon(pathIcon, filenames[floor(random(1, filenames.length - 1))]);
+    //load the emtions
+    //String pathEmotions = dataPath("") + "/emotions";
+    //filenames = listFileNames(pathEmotions);
+    //emotions = loadIcon(pathEmotions, filenames[floor(random(1, filenames.length - 1))]);
     pos = new PVector(posX, posY);
-    icon = loadIcon(filenames[floor(random(1, filenames.length - 1))]);
   }
-  void update(ArrayList <Particle> p) {
-    for (Particle ion : p) {
-      float d = pos.dist(ion.pos);
-      if (d < 5) {
-        health--;
-      }
-    }
+  void update() {
+    if(health < 1)deadCounter--;
+    if(deadCounter < 0)dead = true;
   }
   void show() {
     imageMode(CENTER);
@@ -30,7 +34,16 @@ class Icon {
     rotateY(radians(-30) + map(angles[2], -PI, PI, 0, TWO_PI));
     fill(255);
     image(icon, 0, 0);
+    if(health == 3)fileName = "1_happy.txt";
+    if(health == 2)fileName = "2_sad.txt";
+    if(health == 1)fileName = "3_dead.txt";
+    emotion = loadIcon(directory, fileName);
+    stroke(radWaste);
+    strokeWeight(1);
+    line(0, 0, 0, -100);
+    image(emotion, 0, -100);
     popMatrix();
+    println(health);
   }
 
   // This function returns all the files in a directory as an array of Strings  
@@ -45,8 +58,8 @@ class Icon {
     }
   }
   //function to load binary and return an image
-  PImage loadIcon(String binToLoad) {
-    String[] loadedIcon = loadStrings(dataPath("") + "/icons/" + binToLoad);
+  PImage loadIcon(String thePath, String binToLoad) {
+    String[] loadedIcon = loadStrings(thePath +"/"+ binToLoad);
     int num = 50;
     PImage img = createImage(num, num, ARGB);
     img.loadPixels();

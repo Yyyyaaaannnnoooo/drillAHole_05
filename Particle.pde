@@ -1,10 +1,11 @@
 class Particle {
   PVector pos, target, vel, acc;
   PVector[] trail;
-  float speed = 5, G = 0.4, mass = 5.0, sinFactor = 0, sinCounter = 0;
-  int r = 7, ionizingFactor = 0, count = 0;
+  float speed = 5;
+  int r = 7, count = 0, particleLife = 300;
   color c;
-  boolean removeParticle = false, t;
+  boolean removeParticle = false, t, startRemovalAnimation = false;
+  int removalAnimationRadius = 0;
   PVector hitTarget = new PVector(-10, random(-200, height + 200));
   //position and target of the particle
   Particle(float posX, float posY, float posZ, float trX, float trY, float trZ, boolean hasTrail) {
@@ -25,10 +26,14 @@ class Particle {
     vel.add(acc);
     vel.limit(speed);
     pos.add(vel);
-    ionizingFactor += 10;
-    sinFactor += 0.07;
     trail[count % trail.length] = new PVector(pos.x, pos.y, pos.z);
     count++;
+    particleLife--;
+    if(particleLife < 0) removeParticle = true;
+    //if (startRemovalAnimation) {
+    //  removalAnimation(pos, removalAnimationRadius);
+    //  removalAnimationRadius ++;
+    //}
   }
 
   void show() {
@@ -51,7 +56,7 @@ class Particle {
       popMatrix();
     }
   }
-  //the ionized particle is hits a target
+  //the ionized particle hits a target
   void hit(Particle p, Paddle pad, ArrayList <Icon> i) {
     for (Icon theTarget : i) {
       float d = PVector.dist(theTarget.pos, p.pos);
@@ -66,18 +71,25 @@ class Particle {
       pad.w -= 5;
     }
   }
-  //animation when the target has been hitted
-  void targetIsHitted(PVector p, int radius) {
-    noFill();
-    stroke(0, 255, 0);
-    strokeWeight(2);
-    beginShape(POINTS);
-    for (int i = 0; i < 8; i ++) {
-      float angle = map ( i, 0, 8, 0, TWO_PI);
-      float x = p.x + (cos(angle) * radius);
-      float y = p.y + (sin(angle) * radius);
-      vertex(x, y);
-    }
-    endShape();
-  }
+
+
+  //void removalAnimation(PVector pos, int radius) {
+  //  println(radius);
+  //  noFill();
+  //  stroke(0, 255, 0);
+  //  strokeWeight(20);
+  //  pushMatrix();
+  //  translate(pos.x, pos.y, pos.z);
+  //  beginShape(POINTS);
+  //  for (int i = 0; i < 8; i ++) {
+  //    float angle = map ( i, 0, 8, 0, TWO_PI);
+  //    float x = (cos(angle) * radius);
+  //    float y = (sin(angle) * radius);
+  //    vertex(x, y);
+  //  }
+  //  endShape();
+  //  popMatrix();
+  //  ellipse(0, 0, 500, 500);
+  //  if (radius > 50)startRemovalAnimation = false;
+  //}
 }

@@ -8,10 +8,10 @@ class World {
   int cols, rows, w = 800, h = 900;
   int posX = 0, posY = 0, cell = 10;
   int drillDeeper = -50, drillDepth = -350, actualStream = 0, ionCount = 0;
-  int removalAnimationRadius = 0;
+  int iconNumber = 15;
   float wave = 0, waveCount;
   boolean isDrilling = false;
-  boolean bottom = false, startRemovalAnimation = false;
+  boolean bottom = false;
   PVector position;
   //Check all the lake references
   World() {
@@ -19,7 +19,7 @@ class World {
     rows = h / cell;
     originX = w / 2;
     originY = int(h * 0.75);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < iconNumber; i++) {
       icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     }
     //float posX, float posY, float posZ, float trX, float trY, float trZ
@@ -48,27 +48,36 @@ class World {
     paddle.update(mouseX);
     //animate the lake
     waveCount += 0.05;
-    //radiation shooter
-    Icon target = icon.get(floor(random(icon.size())));
-    if (frameCount % 30 == 0 && ion.size() < 10)  ion.add(new Particle(originX, originY, 0, target.pos.x, target.pos.y, target.pos.z, true));
-    for (Particle i : ion) {
-      i.update();      
-      i.hit(i, paddle, icon);
-    }
+
     for (int i = ion.size() - 1; i >= 0; i--) {
       Particle p = ion.get(i);
       if (p.removeParticle) {
         ion.remove(i);
-        position = new PVector(p.pos.x, p.pos.y, p.pos.z);
-        startRemovalAnimation = true;
-        removalAnimationRadius = 0;
+        //position = new PVector(ion.get(i).pos.x, ion.get(i).pos.y, ion.get(i).pos.z);
+        ////p.startRemovalAnimation = true;
+        ////p.removalAnimationRadius = 50;
+        //p.removalAnimation(position, 50);
       }
     }
-    //Animation if something is hitted
-    if (startRemovalAnimation) {
-      removalAnimation(position, removalAnimationRadius);
-      removalAnimationRadius ++;
+    for (Icon i : icon) {
+      i.update();
     }
+    for (int i = icon.size() - 1; i >= 0; i--) {
+      Icon ic = icon.get(i);
+      if (ic.dead)icon.remove(i);
+    }
+    if (icon.size() < iconNumber)icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
+    //radiation shooter
+    Icon target = icon.get(floor(random(icon.size())));
+    if (frameCount % 30 == 0 && ion.size() < 10) {
+      if(target.health > 0)ion.add(new Particle(originX, originY, 0, target.pos.x, target.pos.y, target.pos.z, true));
+    }
+    for (Particle i : ion) {
+      i.update();      
+      i.hit(i, paddle, icon);
+    }
+    //Animation if something is hitted
+
     //if (drill != null) {
     //  Stream d = drill.get(actualStream);
     //  d.drillDrill(posX * cell, posY * cell, drillDeeper);
@@ -134,9 +143,7 @@ class World {
       yOff += inc;
     }
     endShape();
-    for (Icon i : icon) {
-      i.show();
-    }
+    
     for (Particle part : p) {
       part.show();
     }
@@ -150,6 +157,9 @@ class World {
     //    d.show();
     //  }
     //}
+    for (Icon i : icon) {
+      i.show();
+    }
   }
   void worldRotation() {
     //translate(width / 2, height / 2.3); // turn on if peasyCam is off
@@ -158,21 +168,6 @@ class World {
     translate(-w / 2, -h / 2);
   }
 
-  void removalAnimation(PVector pos, int radius) {
-    println("remove");
-    noFill();
-    stroke(0, 255, 0);
-    strokeWeight(2);
-    beginShape(POINTS);
-    for (int i = 0; i < 8; i ++) {
-      float angle = map ( i, 0, 8, 0, TWO_PI);
-      float x = pos.x + (cos(angle) * radius);
-      float y = pos.y + (sin(angle) * radius);
-      vertex(x, y);
-    }
-    endShape();
-    if (radius > 50)startRemovalAnimation = false;
-  }
 
   void mouseClicked() {
     isDrilling = true;

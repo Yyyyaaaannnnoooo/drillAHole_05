@@ -16,12 +16,12 @@ void setup() {
 }
 void draw() {
   lights();
-  world.update();
-  world.show();
   //worldRotation();
   //LAKE should have it's own stream//
   //also adriller with it's own stream//
   
+  world.update();  
+  world.show();
   /////ADD ALL THIS TO world/////
   facility(world.originX, world.originY - 300, world.drillDepth, 150, 350, 50, color(0), true);
   //facility(originX, originY - 300, drillDepth, 150, 350, 40, radWaste, true);
@@ -35,7 +35,7 @@ void draw() {
   vertex(world.originX + 200, 120 / 2, world.drillDepth);
   vertex(world.originX - 50, 120 / 2, world.drillDepth);
   vertex(world.originX - 50, world.originY - 275 - (350 / 2), world.drillDepth);
-  endShape();
+  endShape();  
   count++;
   //int posX = (int)map(mouseX, 0, width, 0, w);
   //int posY = (int)map(mouseY, 0, height, 0, h);
@@ -62,6 +62,7 @@ void keyPressed() {
 
 void facility(float x, float y, float z, float ww, float hh, float dd, color c, boolean isFill) {
   pushMatrix();
+  strokeWeight(3);
   if (isFill) {
     stroke(255);
     fill(c);

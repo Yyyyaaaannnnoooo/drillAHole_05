@@ -1,36 +1,41 @@
 class World {
   ArrayList <Icon> icon = new ArrayList <Icon>();
+  ArrayList <Particle> ion = new ArrayList <Particle>();
   Particle [] p;
   Electron[] el;
-  int lakeX, lakeY;
+  Paddle paddle;
+  int originX, originY;
   int cols, rows, w = 800, h = 900;
   int posX = 0, posY = 0, cell = 10;
-  int drillDeeper = -50, drillDepth = -350, actualStream = 0;
+  int drillDeeper = -50, drillDepth = -350, actualStream = 0, ionCount = 0;
+  int removalAnimationRadius = 0;
   float wave = 0, waveCount;
   boolean isDrilling = false;
-  boolean bottom = false;
+  boolean bottom = false, startRemovalAnimation = false;
+  PVector position;
   //Check all the lake references
   World() {
     cols = w / cell;
     rows = h / cell;
-    lakeX = w / 2;
-    lakeY = int(h * 0.75);
+    originX = w / 2;
+    originY = int(h * 0.75);
     for (int i = 0; i < 10; i++) {
-      icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows)) * cell));
+      icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     }
     //float posX, float posY, float posZ, float trX, float trY, float trZ
     p = new Particle[30];
     for (int i = 0; i < p.length; i++) {
       float angle = map( i, 0, p.length, 0, TWO_PI);
-      float x = lakeX + (cos(angle) * random(0, r / 5));
-      float y = lakeY + (sin(angle) * random(0, r / 5));
-      p[i] = new Particle(x, y, random(0, 200), lakeX, lakeY, 50);
+      float x = originX + (cos(angle) * random(0, r / 5));
+      float y = originY + (sin(angle) * random(0, r / 5));
+      p[i] = new Particle(x, y, random(0, 200), originX, originY, 50, false);
     }
     //electrons
     el = new Electron[7];
     for (int i = 0; i < el.length; i++) {
-      el[i] = new Electron(random(TWO_PI), random(TWO_PI), lakeX, lakeY, 50, 150, 50);
+      el[i] = new Electron(random(TWO_PI), random(TWO_PI), originX, originY, 50, 150, 50);
     }
+    paddle = new Paddle();
   }
 
   void update() {
@@ -38,11 +43,32 @@ class World {
       part.update();
     }
     for (Electron e : el) {
-      //PVector force = e.attract(e);
-      //e.applyForce(force);
       e.update();
     }
+    paddle.update(mouseX);
+    //animate the lake
     waveCount += 0.05;
+    //radiation shooter
+    Icon target = icon.get(floor(random(icon.size())));
+    if (frameCount % 30 == 0 && ion.size() < 10)  ion.add(new Particle(originX, originY, 0, target.pos.x, target.pos.y, target.pos.z, true));
+    for (Particle i : ion) {
+      i.update();      
+      i.hit(i, paddle, icon);
+    }
+    for (int i = ion.size() - 1; i >= 0; i--) {
+      Particle p = ion.get(i);
+      if (p.removeParticle) {
+        ion.remove(i);
+        position = new PVector(p.pos.x, p.pos.y, p.pos.z);
+        startRemovalAnimation = true;
+        removalAnimationRadius = 0;
+      }
+    }
+    //Animation if something is hitted
+    if (startRemovalAnimation) {
+      removalAnimation(position, removalAnimationRadius);
+      removalAnimationRadius ++;
+    }
     //if (drill != null) {
     //  Stream d = drill.get(actualStream);
     //  d.drillDrill(posX * cell, posY * cell, drillDeeper);
@@ -117,6 +143,8 @@ class World {
     for (Electron e : el) {
       e.show();
     }
+    for (Particle i : ion)i.show();
+    paddle.show();
     //if (drill != null) {
     //  for (Stream d : drill) {
     //    d.show();
@@ -128,6 +156,22 @@ class World {
     rotateX(PI / 3);
     rotateZ( -PI / 3);
     translate(-w / 2, -h / 2);
+  }
+
+  void removalAnimation(PVector pos, int radius) {
+    println("remove");
+    noFill();
+    stroke(0, 255, 0);
+    strokeWeight(2);
+    beginShape(POINTS);
+    for (int i = 0; i < 8; i ++) {
+      float angle = map ( i, 0, 8, 0, TWO_PI);
+      float x = pos.x + (cos(angle) * radius);
+      float y = pos.y + (sin(angle) * radius);
+      vertex(x, y);
+    }
+    endShape();
+    if (radius > 50)startRemovalAnimation = false;
   }
 
   void mouseClicked() {

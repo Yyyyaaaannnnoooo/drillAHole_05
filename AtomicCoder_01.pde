@@ -23,18 +23,18 @@ void draw() {
   //also adriller with it's own stream//
   
   /////ADD ALL THIS TO world/////
-  facility(world.lakeX, world.lakeY - 300, world.drillDepth, 150, 350, 50, color(0), true);
-  //facility(lakeX, lakeY - 300, drillDepth, 150, 350, 40, radWaste, true);
-  facility(world.lakeX + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
-  //facility(world.lakeX, world.lakeY - 300, 100 / 2, 50, 50, 100, color(255, 0, 0), true);
+  facility(world.originX, world.originY - 300, world.drillDepth, 150, 350, 50, color(0), true);
+  //facility(originX, originY - 300, drillDepth, 150, 350, 40, radWaste, true);
+  facility(world.originX + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
+  //facility(world.originX, world.originY - 300, 100 / 2, 50, 50, 100, color(255, 0, 0), true);
   beginShape();
   noFill();
   stroke(155);
   strokeWeight(10);
-  vertex(world.lakeX + 200, 120 / 2, 0);
-  vertex(world.lakeX + 200, 120 / 2, world.drillDepth);
-  vertex(world.lakeX - 50, 120 / 2, world.drillDepth);
-  vertex(world.lakeX - 50, world.lakeY - 275 - (350 / 2), world.drillDepth);
+  vertex(world.originX + 200, 120 / 2, 0);
+  vertex(world.originX + 200, 120 / 2, world.drillDepth);
+  vertex(world.originX - 50, 120 / 2, world.drillDepth);
+  vertex(world.originX - 50, world.originY - 275 - (350 / 2), world.drillDepth);
   endShape();
   count++;
   //int posX = (int)map(mouseX, 0, width, 0, w);

@@ -10,16 +10,19 @@ class Icon {
     pos = new PVector(posX, posY);
     icon = loadIcon(filenames[floor(random(1, filenames.length - 1))]);
   }
-  void update(Particle p) {
-    float d = pos.dist(p.pos);
-    if (d < 25) {
-      health--;
+  void update(ArrayList <Particle> p) {
+    for (Particle ion : p) {
+      float d = pos.dist(ion.pos);
+      if (d < 5) {
+        health--;
+      }
     }
   }
   void show() {
     imageMode(CENTER);
+    //get angle from peasy cam / needs correction
     float [] angles = cam.getRotations();
-    println(angles);
+    //println(angles);
     pushMatrix();
     translate(pos.x, pos.y, icon.height / 2);
     rotateX(HALF_PI);
@@ -51,7 +54,7 @@ class Icon {
       for (int y = 0; y < img.height; y ++) {
         int index = x + img.width * y;
         //if(int(loadedIcon[index]) == 0)img.pixels[index] = color(255, 255);
-        img.pixels[index] = int(loadedIcon[index]) == 0 ? color(255, 255) : color(0, 0);
+        img.pixels[index] = int(loadedIcon[index]) == 0 ? color(255, 255) : color(255, 0);
       }
     }
     img.updatePixels();

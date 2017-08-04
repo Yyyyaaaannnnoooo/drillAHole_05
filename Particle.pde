@@ -1,17 +1,19 @@
 class Particle {
   PVector pos, target, vel, acc;
-  PVector[] trail = new PVector[5];
+  PVector[] trail;
   float speed = 5, G = 0.4, mass = 5.0, sinFactor = 0, sinCounter = 0;
   int r = 7, ionizingFactor = 0, count = 0;
   color c;
-  boolean removeParticle = false;
+  boolean removeParticle = false, t;
   PVector hitTarget = new PVector(-10, random(-200, height + 200));
   //position and target of the particle
-  Particle(float posX, float posY, float posZ, float trX, float trY, float trZ) {
+  Particle(float posX, float posY, float posZ, float trX, float trY, float trZ, boolean hasTrail) {
     c = color(0, 255, 0, 175);
+    t = hasTrail;
     target = new PVector(trX, trY, trZ);
     pos = new PVector(posX, posY, posZ);
     vel = new PVector(0, 0, 0);
+    trail = new PVector[25];
   }
 
 
@@ -25,29 +27,43 @@ class Particle {
     pos.add(vel);
     ionizingFactor += 10;
     sinFactor += 0.07;
+    trail[count % trail.length] = new PVector(pos.x, pos.y, pos.z);
+    count++;
   }
 
   void show() {
     pushMatrix();
     translate(pos.x, pos.y, pos.z);
     fill(c);
+    noStroke();
     box(15);
     popMatrix();
+    if (t) {
+      pushMatrix();
+      beginShape();
+      for (int i = 0; i < trail.length; i++) {
+        strokeWeight(3);
+        stroke(255, 0, 0);
+        if (trail[i] != null)vertex(trail[i].x, trail[i].y, trail[i].z);
+        //box(15);
+      }
+      endShape();
+      popMatrix();
+    }
   }
-  //the ionized particle is shot to a target
-  void radiation(Particle p, Paddle pad) {
-    PVector dir = PVector.sub(hitTarget, p.pos);
-    dir.normalize();
-    dir.mult(1);
-    p.acc = dir;
-    p.vel.add(p.acc);
-    p.vel.limit(5);
-    p.pos.add(vel);
-    //trail[count % trail.length] = new PVector(p.pos.x, p.pos.y);
-    //count++;
+  //the ionized particle is hits a target
+  void hit(Particle p, Paddle pad, ArrayList <Icon> i) {
+    for (Icon theTarget : i) {
+      float d = PVector.dist(theTarget.pos, p.pos);
+      if (d < 5) {
+        p.removeParticle = true;
+        theTarget.health--;
+      }
+    }
+
     if (p.pos.x < pad.x + pad.w && p.pos.x > pad.x - pad.w && p.pos.y > pad.y - pad.h / 2 && p.pos.y < pad.y + pad.h / 2) {
       p.removeParticle = true;
-      pad.h -= 5;
+      pad.w -= 5;
     }
   }
   //animation when the target has been hitted

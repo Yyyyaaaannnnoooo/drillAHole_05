@@ -59,9 +59,7 @@ class World {
         //p.removalAnimation(position, 50);
       }
     }
-    for (Icon i : icon) {
-      i.update();
-    }
+
     for (int i = icon.size() - 1; i >= 0; i--) {
       Icon ic = icon.get(i);
       if (ic.dead)icon.remove(i);
@@ -70,11 +68,14 @@ class World {
     //radiation shooter
     Icon target = icon.get(floor(random(icon.size())));
     if (frameCount % 30 == 0 && ion.size() < 10) {
-      if(target.health > 0)ion.add(new Particle(originX, originY, 0, target.pos.x, target.pos.y, target.pos.z, true));
+      if (target.health > 0)ion.add(new Particle(originX, originY, 0, target.pos.x, target.pos.y, target.pos.z, true));
     }
     for (Particle i : ion) {
       i.update();      
       i.hit(i, paddle, icon);
+    }
+    for (Icon i : icon) {
+      i.update();
     }
     //Animation if something is hitted
 
@@ -107,51 +108,51 @@ class World {
 
 
   void show() {
-    noFill();
-    ortho();
-    background(0);
-   // worldRotation();    
-    beginShape(TRIANGLE);
-    float inc = 0.1, yOff = 0;
+    noFill(); 
+    ortho(); 
+    background(0); 
+    // worldRotation();    
+    beginShape(TRIANGLE); 
+    float inc = 0.1, yOff = 0; 
     for (int y = 0; y < rows; y++) {
-      float xOff = 0;
+      float xOff = 0; 
       for (int x = 0; x < cols; x++) {
-        int index = x + cols * y;
-        float steepness = map(index, 0, rows * cols, 25, 0);
-        float n = map(noise(xOff, yOff), 0, 1, 0, steepness);
-        float amp = noise(xOff, yOff) > 0.5 ? 0 : 1;
-        color c = lerpColor(land, grass, amp);
-        noStroke();
+        int index = x + cols * y; 
+        float steepness = map(index, 0, rows * cols, 25, 0); 
+        float n = map(noise(xOff, yOff), 0, 1, 0, steepness); 
+        float amp = noise(xOff, yOff) > 0.5 ? 0 : 1; 
+        color c = lerpColor(land, grass, amp); 
+        noStroke(); 
         //stroke(c);
         //drawing the lake and a wavy texture
-        float d1 = dist(x, y, cols * 0.5, rows * 0.75);
-        float d2 = dist(x, y, cols * 0.35, rows * 0.8);
-        float d3 = dist(x, y, cols * 0.65, rows * 0.7);
+        float d1 = dist(x, y, cols * 0.5, rows * 0.75); 
+        float d2 = dist(x, y, cols * 0.35, rows * 0.8); 
+        float d3 = dist(x, y, cols * 0.65, rows * 0.7); 
         if (d1 < 15 || d2 < 8 || d3 < 10) {
-          fill(water);
+          fill(water); 
           wave = map(sin(waveCount), -1, 1, -0.5, 0.5);
         } else {
-          fill(c);
+          fill(c); 
           wave = 1;
         }
-        vertex(x * cell, y * cell, n * wave);
-        vertex(x * cell, (y + 1) * cell, n);
-        vertex((x + 1) * cell, (y + 1) * cell, n);
+        vertex(x * cell, y * cell, n * wave); 
+        vertex(x * cell, (y + 1) * cell, n); 
+        vertex((x + 1) * cell, (y + 1) * cell, n); 
         //vertex((x + 1) * cell, y  * cell, n);
         xOff += inc;
       }
       yOff += inc;
     }
-    endShape();
-    
+    endShape(); 
+
     for (Particle part : p) {
       part.show();
     }
     for (Electron e : el) {
       e.show();
     }
-    for (Particle i : ion)i.show();
-    paddle.show();
+    for (Particle i : ion)i.show(); 
+    paddle.show(); 
     //if (drill != null) {
     //  for (Stream d : drill) {
     //    d.show();
@@ -163,23 +164,23 @@ class World {
   }
   void worldRotation() {
     translate(width / 2, height / 2); // turn on if peasyCam is off
-    rotateX(rotX);
-    rotateZ(rotZ);
-    translate(-w / 2, -h / 2);
-    
-    if(rotX <= 0 || rotZ >= 0){
+    rotateX(rotX); 
+    rotateZ(rotZ); 
+    translate(-w / 2, -h / 2); 
+
+    if (rotX <= 0 || rotZ >= 0) {
       //reset = false;
-      rotX = rotZ = 0;
+      rotX = rotZ = 0; 
       gameStart = true;
-    }else if(reset){
-      rotX -= radians(resetRotation);
+    } else if (reset) {
+      rotX -= radians(resetRotation); 
       rotZ += radians(resetRotation);
     }
   }
 
 
   void mouseClicked() {
-    isDrilling = true;
+    isDrilling = true; 
     //drillDeeper -= 50;
     //Stream d = drill.get(actualStream);
     //if (d.bottom) {
@@ -201,19 +202,19 @@ class World {
     ///inverted//
     if (key == CODED) {
       if (keyCode == UP) {
-        posX++;
+        posX++; 
         if (posX > rows)posX = rows;
       }
       if (keyCode == DOWN) {
-        posX--;
+        posX--; 
         if (posX < 0)posX = 0;
       }
       if (keyCode == LEFT) {
-        posY--;
+        posY--; 
         if (posY < 0)posX = 0;
       }
       if (keyCode == RIGHT) {
-        posY++;
+        posY++; 
         if (posY > cols)posY = cols;
       }
     }

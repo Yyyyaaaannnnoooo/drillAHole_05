@@ -12,7 +12,8 @@ class Health {
     String pathEmotions = dataPath("") + "/emotions";
     String[] filenames = listFileNames(pathEmotions);
     filenames = listFileNames(pathEmotions);
-    for (int i = 0; i < emotions.length; i++)emotions[i] = loadIcon(pathEmotions, filenames[i]);
+    println(filenames);
+    for (int i = 1; i <= emotions.length; i++)emotions[i - 1] = loadIcon(pathEmotions, filenames[i], true);
 
     pos = new PVector(x, y);
     target = new PVector(x, y - 300);
@@ -41,6 +42,7 @@ class Health {
       //for (int i = 0; i < emotions.length; i++)image(emotions[i], emotions[i].height / 2, emotions[i].width * i);
       pushMatrix();
       translate(pos.x, pos.y);
+      //emotions[index].resize(emotions[index].width / 2, 0);
       image(emotions[index], 0, 0);
       println(index);
       popMatrix();

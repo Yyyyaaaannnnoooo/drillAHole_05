@@ -2,7 +2,6 @@ class Icon {
   Health h;
   PImage[] dancingGuy = new PImage[2];
   boolean dead = false, hitted = false, updateHealth = false;
-  ;
   PImage icon;
   int hitCounter = 0, step = 0, health = 4, prevHealth = health;
   private int deadCounter = 60;
@@ -13,7 +12,7 @@ class Icon {
     //load icons
     String pathIcon = dataPath("") + "/icons";
     String[] filenames = listFileNames(pathIcon);
-    icon = loadIcon(pathIcon, filenames[floor(random(1, filenames.length - 1))]);
+    icon = loadIcon(pathIcon, filenames[floor(random(1, filenames.length))], false);
     pos = new PVector(posX, posY);
   }
   void update() {

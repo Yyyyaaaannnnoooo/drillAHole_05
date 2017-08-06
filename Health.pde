@@ -13,15 +13,15 @@ class Health {
     String[] filenames = listFileNames(pathEmotions);
     filenames = listFileNames(pathEmotions);
     println(filenames);
-    for (int i = 1; i <= emotions.length; i++)emotions[i - 1] = loadIcon(pathEmotions, filenames[i], true);
+    //from 1 to avoid the file .DS_store
+    for (int i = 1; i <= emotions.length; i++)emotions[i - 1] = loadIcon(pathEmotions, filenames[i], color(0), color(255, 255, 0));
 
     pos = new PVector(x, y);
     target = new PVector(x, y - 300);
     vel = new PVector(0, 0);
   }
 
-  void update() {    
-    //showAnimation = true;
+  void update() {
     PVector dir = PVector.sub(target, pos);
     dir.normalize();
     dir.mult(0.1);
@@ -42,7 +42,6 @@ class Health {
       //for (int i = 0; i < emotions.length; i++)image(emotions[i], emotions[i].height / 2, emotions[i].width * i);
       pushMatrix();
       translate(pos.x, pos.y);
-      //emotions[index].resize(emotions[index].width / 2, 0);
       image(emotions[index], 0, 0);
       println(index);
       popMatrix();

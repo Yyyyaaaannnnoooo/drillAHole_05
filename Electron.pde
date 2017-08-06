@@ -6,7 +6,7 @@ class Electron {
   //PVector acceleration;
   //float mass, G = 1;
   //int count = 0;
-  float w, h, rotY, rotZ, incZ, incY;
+  float w, h, rotY, rotZ, incZ, incY, count;
   PVector pos;
   PVector electron;
   PVector[] trail = new PVector[50];  

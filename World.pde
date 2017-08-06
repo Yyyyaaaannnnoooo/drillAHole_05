@@ -107,10 +107,7 @@ class World {
   }
 
 
-  void show() {
-    noFill(); 
-    ortho(); 
-    background(0); 
+  void show() { 
     // worldRotation();    
     beginShape(TRIANGLE); 
     float inc = 0.1, yOff = 0; 
@@ -119,7 +116,7 @@ class World {
       for (int x = 0; x < cols; x++) {
         int index = x + cols * y; 
         float steepness = map(index, 0, rows * cols, 25, 0); 
-        float n = map(noise(xOff, yOff), 0, 1, 0, steepness); 
+        float n = 0;//map(noise(xOff, yOff), 0, 1, 0, steepness); 
         float amp = noise(xOff, yOff) > 0.5 ? 0 : 1; 
         color c = lerpColor(land, grass, amp); 
         noStroke(); 

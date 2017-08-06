@@ -1,12 +1,12 @@
-import peasy.*;
+//import peasy.*;
 //PeasyCam cam;
 World world;
 //float world[][];
 int r = 200;
-int count = 0;
+float BGcount = 0;
 boolean gameStart = false;
 color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0), 
-      grass = color(10, 255, 50), land = color(180, 100, 10);
+  grass = color(10, 255, 50), land = color(180, 100, 10);
 void settings() {
   size(1200, displayHeight, P3D);
 }
@@ -16,11 +16,17 @@ void setup() {
   //cam = new PeasyCam(this, 1000);
 }
 void draw() {
-  lights();
+  //lights();
+ // noFill(); 
+  ortho(); 
+  background(0);
   //worldRotation();
   //LAKE should have it's own stream//
   //also adriller with it's own stream//
-  if(gameStart)world.update(); 
+  if (gameStart) {
+    world.update();
+    background(abs(sin(BGcount)) * 200, 0, 0);
+  }
   world.worldRotation();
   world.show();
   /////ADD ALL THIS TO world/////
@@ -37,7 +43,7 @@ void draw() {
   vertex(world.originX - 50, 120 / 2, world.drillDepth);
   vertex(world.originX - 50, world.originY - 275 - (350 / 2), world.drillDepth);
   endShape();  
-  count++;
+  BGcount += 0.05;
   //int posX = (int)map(mouseX, 0, width, 0, w);
   //int posY = (int)map(mouseY, 0, height, 0, h);
   //fill(255, 0, 0);

@@ -8,11 +8,11 @@ class Icon {
   PVector pos;
   private String fileName = "", directory = dataPath("")+"/emotions/";
   Icon(float posX, float posY) {
-    h = new Health(posX / 10, posY / 10);
+    h = new Health(posX, posY);
     //load icons
     String pathIcon = dataPath("") + "/icons";
     String[] filenames = listFileNames(pathIcon);
-    icon = loadIcon(pathIcon, filenames[floor(random(1, filenames.length))], false);
+    icon = loadIcon(pathIcon, filenames[floor(random(1, filenames.length))], color(255), color(0, 0));
     pos = new PVector(posX, posY);
   }
   void update() {
@@ -29,40 +29,26 @@ class Icon {
   }
   void show() {
     imageMode(CENTER);
-    //get angle from peasy cam / needs correction
-    //float [] angles = cam.getRotations();
-    //println(angles);
     pushMatrix();
-    translate(pos.x, pos.y, icon.height / 2);
-    //rotateX(HALF_PI);
-    //rotate(PI);
-    //rotateY(radians(-30) + map(angles[2], -PI, PI, 0, TWO_PI));
+    translate(pos.x, pos.y);
     fill(255);
-    image(icon, 0, 0);
+    image(icon, 0, 0);    
+    popMatrix();
     if (health == 3) {      
       println("happy");
-      //h.showAnimation = true;
       h.update();
       h.show(0);
     }
     if (health == 2) {
       println("sad");
-      //h.showAnimation = true;
       h.update();
       h.show(1);
     }
     if (health <= 1) {
       println("dead");
-      //h.showAnimation = true;
       h.update();
       h.show(2);
     }
-    //emotion = loadIcon(directory, fileName);
-    //stroke(radWaste);
-    //strokeWeight(1);
-    //line(0, 0, 0, -100);
-    //image(emotion, 0, -100);
-    popMatrix();
     //println(health);
   }
 }

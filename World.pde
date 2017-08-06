@@ -5,13 +5,13 @@ class World {
   Electron[] el;
   Paddle paddle;
   int originX, originY;
-  int cols, rows, w = 800, h = 900;
+  int cols, rows, w = 800, h = displayHeight;
   int posX = 0, posY = 0, cell = 10;
   int drillDeeper = -50, drillDepth = -350, actualStream = 0, ionCount = 0;
   int iconNumber = 15;
-  float wave = 0, waveCount;
+  float wave = 0, waveCount, resetRotation = 1, rotX = PI / 3, rotZ = -PI / 3;
   boolean isDrilling = false;
-  boolean bottom = false;
+  boolean bottom = false, reset = false;
   PVector position;
   //Check all the lake references
   World() {
@@ -110,7 +110,7 @@ class World {
     noFill();
     ortho();
     background(0);
-    worldRotation();    
+   // worldRotation();    
     beginShape(TRIANGLE);
     float inc = 0.1, yOff = 0;
     for (int y = 0; y < rows; y++) {
@@ -162,10 +162,19 @@ class World {
     }
   }
   void worldRotation() {
-    //translate(width / 2, height / 2.3); // turn on if peasyCam is off
-    rotateX(PI / 3);
-    rotateZ( -PI / 3);
+    translate(width / 2, height / 2); // turn on if peasyCam is off
+    rotateX(rotX);
+    rotateZ(rotZ);
     translate(-w / 2, -h / 2);
+    
+    if(rotX <= 0 || rotZ >= 0){
+      //reset = false;
+      rotX = rotZ = 0;
+      gameStart = true;
+    }else if(reset){
+      rotX -= radians(resetRotation);
+      rotZ += radians(resetRotation);
+    }
   }
 
 

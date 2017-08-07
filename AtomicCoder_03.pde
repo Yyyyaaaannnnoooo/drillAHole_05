@@ -4,7 +4,7 @@ World world;
 //float world[][];
 int r = 200;
 float BGcount = 0;
-boolean gameStart = false;
+boolean gameStart = false, blink = false, pause = false;
 color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0), 
   grass = color(10, 255, 50), land = color(180, 100, 10);
 void settings() {
@@ -16,17 +16,17 @@ void setup() {
   //cam = new PeasyCam(this, 1000);
 }
 void draw() {
-  //lights();
+  lights();
  // noFill(); 
   ortho(); 
   background(0);
+  if(blink)background(abs(sin(BGcount)) * 200, 0, 0);
   //worldRotation();
   //LAKE should have it's own stream//
   //also adriller with it's own stream//
-  if (gameStart) {
+  if (gameStart && !pause) {
     world.update();
     //blinking red for drama!
-    background(abs(sin(BGcount)) * 200, 0, 0);
   }
   world.worldRotation();
   world.drillinganimation();
@@ -35,7 +35,7 @@ void draw() {
   /////ADD ALL THIS TO world/////
   facility(world.originX * world.cell, world.originY * world.cell - 300, world.drillDepth, 150, 350, 50, color(0), false);
   //facility(originX, originY - 300, drillDepth, 150, 350, 40, radWaste, true);
-  facility(world.originX * world.cell + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
+  //facility(world.originX * world.cell + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
   //facility(world.originX, world.originY - 300, 100 / 2, 50, 50, 100, color(255, 0, 0), true);
   beginShape();
   noFill();
@@ -68,6 +68,8 @@ void mouseClicked() {
 
 void keyPressed() {
   //if (key == 'r')drillDeeper = -50;
+  //pausing the game
+  if(key == ' ') pause = !pause;
   world.keyPressed();
 }
 

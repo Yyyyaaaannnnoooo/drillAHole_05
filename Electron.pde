@@ -54,7 +54,7 @@ class Electron {
 
   // Draw the Electron
   void show() {
-    color c = color(155, 0, 0);
+    color c = color(255, 0, 0);
     stroke(c);
     strokeWeight(1);
     pushMatrix();

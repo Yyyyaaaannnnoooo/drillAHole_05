@@ -5,6 +5,7 @@ class World {
   ArrayList <Electron> el = new ArrayList <Electron>();
   Stream driller;
   Stream waterStream;
+  Facility [] monoliths = new Facility[4];
   //Particle [] p;
   //Electron[] el;
   Paddle paddle;
@@ -27,8 +28,14 @@ class World {
       icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     }
     //float posX, float posY, float posZ, float trX, float trY, float trZ
-    //p = new Particle[atomNum];
-
+    for (int i = 0; i < monoliths.length; i++) {
+      int w = 25;
+      int r = cell * 7;
+      float angle = map(i, 0, monoliths.length, 0, TWO_PI);
+      int x = originX * cell + round(r * cos(angle));
+      int y = w + r + round(r * sin(angle));
+      monoliths[i] = new Facility(x, y, 0, w, 70, 35, angle, drilling, true, true);
+    }
     paddle = new Paddle();
     ///Water stream and the driller
     waterStream = new Stream(originX * cell, 0, -200, originX * cell, originY * cell, 0, water);
@@ -67,52 +74,55 @@ class World {
     for (Icon i : icon) {
       i.update();
     }
-
-    //Animation if something is hitted
-
-    //if (drill != null) {
-    //  Stream d = drill.get(actualStream);
-    //  d.drillDrill(posX * cell, posY * cell, drillDeeper);
-    //  //Stream d = drill.get(actualStream);
-    //  if (bottom) {
-    //    drill.add(new Stream(posX * cell, posY * cell, -50, drilling));        
-    //    bottom = false;
-    //    actualStream++;
-    //    drillDeeper = -50;
-    //  }
-    //  if (drillDeeper <= drillDepth) {
-    //    //drillDeeper = drillDepth;
-    //    isDrilling = false;
-    //    bottom = true;
-    //    for (int i = 0; i < lake.waterStream.length; i++) {
-    //      d.crossingStream(d, lake.waterStream[i]);
-    //    }
-    //  }
-    //  for (Stream dd : drill) {
-    //    dd.update();
-    //    lake.update(dd.pollution);
-    //  }
-    //}
-
-    //if (isDrilling)drillDeeper -= 50;
   }
 
 
   void show() { 
     // worldRotation();    
     terrain();
-    paddle.show(); 
-    //if (drill != null) {
-    //  for (Stream d : drill) {
-    //    d.show();
-    //  }
-    //}
-
+    paddle.show();
     for (Particle i : ion)i.show();
-    for (Icon i : icon) {
-      i.show();
-    }
+    for (Icon i : icon)i.show();
+    for(Facility f: monoliths)f.show();
   }
+  ///the terrain of the world
+  void terrain() {
+    beginShape(TRIANGLE); 
+    float inc = 0.1, yOff = 0; 
+    for (int y = 0; y < rows; y++) {
+      float xOff = 0; 
+      for (int x = 0; x < cols; x++) {
+        int index = x + cols * y; 
+        float steepness = map(index, 0, rows * cols, 25, 0); 
+        float n = map(noise(xOff, yOff), 0, 1, -10, 10); 
+        float amp = noise(xOff, yOff) > 0.5 ? 0 : 1; 
+        color c = lerpColor(land, grass, amp); 
+        noStroke(); 
+        //stroke(c);
+        //drawing the lake and a wavy texture
+        float d1 = dist(x, y, originX, originY); 
+        float d2 = dist(x, y, cols * 0.35, rows * 0.8); 
+        float d3 = dist(x, y, cols * 0.65, rows * 0.7); 
+        if (d1 < 15 || d2 < 8 || d3 < 10) {
+          fill(water); 
+          wave = sin(waveCount) * n;
+        } else {
+          fill(c); 
+          wave = 0;
+        }
+        vertex(x * cell, y * cell, wave); 
+        vertex(x * cell, (y + 1) * cell, 0); 
+        vertex((x + 1) * cell, (y + 1) * cell, 0); 
+        //vertex((x + 1) * cell, y  * cell, n);
+        xOff += inc;
+      }
+      yOff += inc;
+    }
+    endShape(); 
+    //animate the lake
+    waveCount += 0.05;
+  }
+  //set the world in perspective and back to topo view
   void worldRotation() {
     translate(width / 2, height / 2); // turn on if peasyCam is off
     rotateX(rotX); 
@@ -152,8 +162,11 @@ class World {
   }
 
   void atomAnimation() {
-    if (driller != null && driller.hittedWater && p.size() < atomNum)initAtom(5);
-    if(p.size() == atomNum)reset = true;
+    if (driller != null && driller.hittedWater && p.size() < atomNum) {
+      blink = true;
+      initAtom(5);
+    }
+    if (p.size() == atomNum)reset = true;
     //update
     if (p != null)for (Particle part : p)  part.update();
     for (Electron e : el) e.update();
@@ -174,42 +187,7 @@ class World {
     //electrons
     el.add(new Electron(random(TWO_PI), random(TWO_PI), originX * cell, originY * cell, 50, 150, 50));
   }
-  void terrain() {
-    beginShape(TRIANGLE); 
-    float inc = 0.1, yOff = 0; 
-    for (int y = 0; y < rows; y++) {
-      float xOff = 0; 
-      for (int x = 0; x < cols; x++) {
-        int index = x + cols * y; 
-        float steepness = map(index, 0, rows * cols, 25, 0); 
-        float n = map(noise(xOff, yOff), 0, 1, -10, 10); 
-        float amp = noise(xOff, yOff) > 0.5 ? 0 : 1; 
-        color c = lerpColor(land, grass, amp); 
-        noStroke(); 
-        //stroke(c);
-        //drawing the lake and a wavy texture
-        float d1 = dist(x, y, originX, originY); 
-        float d2 = dist(x, y, cols * 0.35, rows * 0.8); 
-        float d3 = dist(x, y, cols * 0.65, rows * 0.7); 
-        if (d1 < 15 || d2 < 8 || d3 < 10) {
-          fill(water); 
-          wave = sin(waveCount) * n;
-        } else {
-          fill(c); 
-          wave = 0;
-        }
-        vertex(x * cell, y * cell, wave); 
-        vertex(x * cell, (y + 1) * cell, 0); 
-        vertex((x + 1) * cell, (y + 1) * cell, 0); 
-        //vertex((x + 1) * cell, y  * cell, n);
-        xOff += inc;
-      }
-      yOff += inc;
-    }
-    endShape(); 
-    //animate the lake
-    waveCount += 0.05;
-  }
+
   void mouseClicked() {
     isDrilling = true; 
     //drillDeeper -= 50;

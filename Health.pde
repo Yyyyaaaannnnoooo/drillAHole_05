@@ -1,5 +1,5 @@
 class Health {
-  PImage[] emotions = new PImage[3];
+  PImage[] emotions;// = new PImage[3];
   float speed = 2, x, y;
   int life = 30;
   private String fileName = "", directory = dataPath("")+"/emotions/";
@@ -9,13 +9,14 @@ class Health {
     x = x_;
     y = y_;
     //load the emtions
-    String pathEmotions = dataPath("") + "/emotions";
-    String[] filenames = listFileNames(pathEmotions);
-    filenames = listFileNames(pathEmotions);
-    println(filenames);
-    //from 1 to avoid the file .DS_store
-    for (int i = 1; i <= emotions.length; i++)emotions[i - 1] = loadIcon(pathEmotions, filenames[i], color(0), color(255, 255, 0));
-
+    String path = dataPath("") + "/emotions";
+    String[] filenames = listFileNames(path);
+    filenames = listFileNames(path);    
+    emotions = new PImage[3];
+    for (int i = 0; i < emotions.length; i++) {
+      emotions[i] = loadIcon(path, filenames[i], color(0), color(255, 255, 0));
+      emotions[i].resize(round(emotions[i].width * 0.75), 0);
+    }
     pos = new PVector(x, y);
     target = new PVector(x, y - 300);
     vel = new PVector(0, 0);
@@ -43,7 +44,6 @@ class Health {
       pushMatrix();
       translate(pos.x, pos.y);
       image(emotions[index], 0, 0);
-      println(index);
       popMatrix();
     }
   }

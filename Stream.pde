@@ -1,9 +1,9 @@
 class Stream {
   ArrayList <PVector> stream;
   PVector[] crossStream;
-  boolean isCrossed = false, ZA;
+  boolean isCrossed = false, ZA, hittedWater = false;
   color c;
-  int step = 0, pxl = 8, pollution = 0;
+  int step = 0, pxl = 15, pollution = 0;
   int x, y, z, x1, y1, z1, x2, y2, z2;
   Stream (int x1_, int y1_, int z1_, int x2_, int y2_, int z2_, color col) {
     stream = new ArrayList <PVector>();
@@ -12,12 +12,12 @@ class Stream {
     z1 = z1_;
     x2 = x2_;
     y2 = y2_;
-    z2 = z2_;
+    z2 = z2_;    
+    c = col;
     ///making streams with "elbows"
     ///calculating the midpoint with some offset
     float d = abs(y2 - y1);
     int midPoint = int(d * random(0.15, 0.85));
-    c = col;
     for (int i = y1; i < midPoint; i += 5) {
       stream.add(new PVector(x1, i, z1));
     }
@@ -61,7 +61,7 @@ class Stream {
     translate(p.x, p.y, p.z);
     noStroke();
     fill(c);
-    //box(pxl);
+    box(pxl);
     popMatrix();
     if (isCrossed) {
       int index = step % crossStream.length;
@@ -71,7 +71,8 @@ class Stream {
       fill(radWaste);
       box(pxl);
       popMatrix();
-      if (index == 0)pollution++;//this has to be improved
+      if (index == 0)hittedWater = true;//this has to be improved
+      else hittedWater = false;
     }
   }
 

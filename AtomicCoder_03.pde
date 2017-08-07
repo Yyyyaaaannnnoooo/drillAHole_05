@@ -29,20 +29,22 @@ void draw() {
     background(abs(sin(BGcount)) * 200, 0, 0);
   }
   world.worldRotation();
+  world.drillinganimation();
+  world.atomAnimation();
   world.show();
   /////ADD ALL THIS TO world/////
-  facility(world.originX, world.originY - 300, world.drillDepth, 150, 350, 50, color(0), true);
+  facility(world.originX * world.cell, world.originY * world.cell - 300, world.drillDepth, 150, 350, 50, color(0), false);
   //facility(originX, originY - 300, drillDepth, 150, 350, 40, radWaste, true);
-  facility(world.originX + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
+  facility(world.originX * world.cell + 200, 120 / 2, 100 / 2, 200, 120, 100, drilling, true);
   //facility(world.originX, world.originY - 300, 100 / 2, 50, 50, 100, color(255, 0, 0), true);
   beginShape();
   noFill();
   stroke(155);
   strokeWeight(10);
-  vertex(world.originX + 200, 120 / 2, 0);
-  vertex(world.originX + 200, 120 / 2, world.drillDepth);
-  vertex(world.originX - 50, 120 / 2, world.drillDepth);
-  vertex(world.originX - 50, world.originY - 275 - (350 / 2), world.drillDepth);
+  vertex(world.originX * world.cell + 200, 120 / 2, 0);
+  vertex(world.originX * world.cell + 200, 120 / 2, world.drillDepth);
+  vertex(world.originX * world.cell - 50, 120 / 2, world.drillDepth);
+  vertex(world.originX * world.cell - 50, world.originY * world.cell - 275 - (350 / 2), world.drillDepth);
   endShape();  
   BGcount += 0.05;
   //int posX = (int)map(mouseX, 0, width, 0, w);
@@ -54,7 +56,7 @@ void draw() {
 }
 
 void mouseClicked() {
-  world.reset = true;
+ // world.reset = true;
   world.mouseClicked();
   //drillDeeper -= 50;
   //if (drillDeeper < drillDepth) {

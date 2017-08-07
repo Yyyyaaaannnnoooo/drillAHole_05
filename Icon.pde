@@ -22,10 +22,8 @@ class Icon {
     //reset the health animation
     if (prevHealth != health) {
       h.showAnimation = true;
-      //updateHealth = true;
       prevHealth = health;
     }
-    //if (updateHealth) h.update();
   }
   void show() {
     imageMode(CENTER);
@@ -34,18 +32,15 @@ class Icon {
     fill(255);
     image(icon, 0, 0);    
     popMatrix();
-    if (health == 3) {      
-      println("happy");
+    if (health == 3) {  
       h.update();
       h.show(0);
     }
     if (health == 2) {
-      println("sad");
       h.update();
       h.show(1);
     }
     if (health <= 1) {
-      println("dead");
       h.update();
       h.show(2);
     }

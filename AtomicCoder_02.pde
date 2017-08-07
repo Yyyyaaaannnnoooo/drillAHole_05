@@ -25,6 +25,7 @@ void draw() {
   //also adriller with it's own stream//
   if (gameStart) {
     world.update();
+    //blinking red for drama!
     background(abs(sin(BGcount)) * 200, 0, 0);
   }
   world.worldRotation();

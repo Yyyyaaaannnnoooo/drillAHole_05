@@ -1,5 +1,5 @@
 class Paddle {
-  int w = 100;
+  float w = 100;
   int h = 40;
   int d = 20;
   float x = 520, y = 480;

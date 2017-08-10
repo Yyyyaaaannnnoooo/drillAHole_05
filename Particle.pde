@@ -29,7 +29,7 @@ class Particle {
     trail[count % trail.length] = new PVector(pos.x, pos.y, pos.z);
     count++;
     particleLife--;
-    if(particleLife < 0) removeParticle = true;
+    if (particleLife < 0) removeParticle = true;
     //if (startRemovalAnimation) {
     //  removalAnimation(pos, removalAnimationRadius);
     //  removalAnimationRadius ++;
@@ -63,12 +63,14 @@ class Particle {
       if (d < 5) {
         p.removeParticle = true;
         theTarget.health--;
+        a.playNotes(2);
       }
     }
 
     if (p.pos.x < pad.x + pad.w && p.pos.x > pad.x - pad.w && p.pos.y > pad.y - pad.h / 2 && p.pos.y < pad.y + pad.h / 2) {
       p.removeParticle = true;
-      pad.w -= 5;
+      pad.w -= 0.5;
+      a.playNotes(1);
     }
   }
 

@@ -1,10 +1,11 @@
 //import peasy.*;
 //PeasyCam cam;
 World world;
+Audio a;
 //float world[][];
 int r = 200;
 float BGcount = 0;
-boolean gameStart = false, blink = false, pause = false;
+boolean gameStart = false, blink = false, pause = false, playSound = true;
 color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0), 
   grass = color(10, 255, 50), land = color(180, 100, 10);
 void settings() {
@@ -13,14 +14,21 @@ void settings() {
 void setup() {
   background(0); 
   world = new World();
+  a = new Audio();
+  background = new Minim(this);
+  BG = background.loadFile("DescenteInfinie_01.mp3", 2048);
   //cam = new PeasyCam(this, 1000);
 }
 void draw() {
+  if (playSound) {
+    BGSound();
+    playSound = false;
+  }
   lights();
- // noFill(); 
+  // noFill(); 
   ortho(); 
   background(0);
-  if(blink)background(abs(sin(BGcount)) * 200, 0, 0);
+  if (blink)background(abs(sin(BGcount)) * 200, 0, 0);
   //worldRotation();
   //LAKE should have it's own stream//
   //also adriller with it's own stream//
@@ -56,7 +64,7 @@ void draw() {
 }
 
 void mouseClicked() {
- // world.reset = true;
+  // world.reset = true;
   world.mouseClicked();
   //drillDeeper -= 50;
   //if (drillDeeper < drillDepth) {
@@ -65,11 +73,18 @@ void mouseClicked() {
   //  drill.crossingStream(drill, waterStream);
   //}
 }
+void BGSound() {
+  println("sound");
+  BG.loop();
+}
 
 void keyPressed() {
   //if (key == 'r')drillDeeper = -50;
   //pausing the game
-  if(key == ' ') pause = !pause;
+  if (key == ' ') pause = !pause;
+  //if (key == '1') a.playNotes(1);
+  //if (key == '2') a.playNotes(2);
+  //if (key == '3') a.playNotes(3);
   world.keyPressed();
 }
 

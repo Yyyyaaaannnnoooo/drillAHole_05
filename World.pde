@@ -38,12 +38,11 @@ class World {
     }
     paddle = new Paddle();
     ///Water stream and the driller
-    waterStream = new Stream(originX * cell, 0, -200, originX * cell, originY * cell, 0, water);
+    waterStream = new Stream(originX * cell, 0, -200, originX * cell, originY * cell, 0, water, true);
   }
 
   void update() {
-    paddle.update(mouseX);
-
+    paddle.update(constrain(mouseX, 0, cols * cell));
     for (int i = ion.size() - 1; i >= 0; i--) {
       Particle p = ion.get(i);
       if (p.removeParticle) {
@@ -82,8 +81,8 @@ class World {
     terrain();
     paddle.show();
     for (Particle i : ion)i.show();
-    for (Icon i : icon)i.show();
-    for(Facility f: monoliths)f.show();
+    if (gameStart)for (Icon i : icon)i.show();
+    for (Facility f : monoliths)f.show();
   }
   ///the terrain of the world
   void terrain() {
@@ -140,13 +139,13 @@ class World {
   }
 
   void drillinganimation() {
-    int decrement = 5;
+    int decrement = 1;
     stroke(drilling);
     strokeWeight(5);
     line(originX * cell, rows / 2 * cell, 0, originX * cell, rows / 2 * cell, drillDeeper);
     if (drillDeeper >= drillDepth) drillDeeper -= decrement;
     if (drillDeeper == drillDepth) {
-      driller = new Stream(originX * cell, rows / 2 * cell, drillDepth, drilling);
+      driller = new Stream(originX * cell, rows / 2 * cell, drillDepth, drilling, false);
       drillDeeper = drillDepth;
       //decrement = 0;
     }
@@ -165,6 +164,11 @@ class World {
     if (driller != null && driller.hittedWater && p.size() < atomNum) {
       blink = true;
       initAtom(5);
+      //when the radWaste hits the water pond start the music
+      if (playSound) {
+        BGSound();
+        playSound = false;
+      }
     }
     if (p.size() == atomNum)reset = true;
     //update

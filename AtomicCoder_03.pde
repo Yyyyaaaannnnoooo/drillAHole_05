@@ -16,14 +16,11 @@ void setup() {
   world = new World();
   a = new Audio();
   background = new Minim(this);
-  BG = background.loadFile("DescenteInfinie_01.mp3", 2048);
+  BG = background.loadFile("DescenteInfinie_03.aiff", 2048);
   //cam = new PeasyCam(this, 1000);
 }
 void draw() {
-  if (playSound) {
-    BGSound();
-    playSound = false;
-  }
+
   lights();
   // noFill(); 
   ortho(); 
@@ -34,6 +31,10 @@ void draw() {
   //also adriller with it's own stream//
   if (gameStart && !pause) {
     world.update();
+    //if (playSound) {
+    //  BGSound();
+    //  playSound = false;
+    //}
     //blinking red for drama!
   }
   world.worldRotation();
@@ -87,7 +88,7 @@ void keyPressed() {
   //if (key == '3') a.playNotes(3);
   world.keyPressed();
 }
-
+//delete this
 void facility(float x, float y, float z, float ww, float hh, float dd, color c, boolean isFill) {
   pushMatrix();
   strokeWeight(3);
@@ -103,7 +104,7 @@ void facility(float x, float y, float z, float ww, float hh, float dd, color c, 
   box(ww, hh, dd);
   popMatrix();
 }
-
+///delete this
 void pixelCircle( float x, float y, color c) {
   pushMatrix();
   noStroke();

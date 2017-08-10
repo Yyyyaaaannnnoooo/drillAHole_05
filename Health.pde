@@ -14,7 +14,7 @@ class Health {
     filenames = listFileNames(path);    
     emotions = new PImage[3];
     for (int i = 0; i < emotions.length; i++) {
-      emotions[i] = loadIcon(path, filenames[i], color(0), color(255, 255, 0));
+      emotions[i] = loadIcon(path, filenames[i], color(0), color(255));
       emotions[i].resize(round(emotions[i].width * 0.75), 0);
     }
     pos = new PVector(x, y);

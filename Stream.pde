@@ -1,11 +1,11 @@
 class Stream {
   ArrayList <PVector> stream;
   PVector[] crossStream;
-  boolean isCrossed = false, ZA, hittedWater = false;
+  boolean isCrossed = false, showBox = false, hittedWater = false;
   color c;
   int step = 0, pxl = 15, pollution = 0;
   int x, y, z, x1, y1, z1, x2, y2, z2;
-  Stream (int x1_, int y1_, int z1_, int x2_, int y2_, int z2_, color col) {
+  Stream (int x1_, int y1_, int z1_, int x2_, int y2_, int z2_, color col, boolean sb) {
     stream = new ArrayList <PVector>();
     x1 = x1_;
     y1 = y1_;
@@ -14,6 +14,7 @@ class Stream {
     y2 = y2_;
     z2 = z2_;    
     c = col;
+    showBox = sb;
     ///making streams with "elbows"
     ///calculating the midpoint with some offset
     float d = abs(y2 - y1);
@@ -32,18 +33,19 @@ class Stream {
     }
   }
 
-  Stream (int x_, int y_, int z_, color col) {
+  Stream (int x_, int y_, int z_, color col, boolean sb) {
     stream = new ArrayList <PVector>();
     x = x_;
     y = y_;
     z = z_;
     c = col;
+    showBox = sb;
     for (int i = z; i < 0; i += 5) {
       stream.add(new PVector(x, y, i));
     }
   }
   void update() {
-    step++;
+    step += 2;
   }
 
   void show() {
@@ -56,13 +58,15 @@ class Stream {
       vertex(p.x, p.y, p.z);
     }
     endShape();
-    PVector p = stream.get(step % stream.size());
-    pushMatrix();
-    translate(p.x, p.y, p.z);
-    noStroke();
-    fill(c);
-    box(pxl);
-    popMatrix();
+    if (showBox) {
+      PVector p = stream.get(step % stream.size());
+      pushMatrix();
+      translate(p.x, p.y, p.z);
+      noStroke();
+      fill(c);
+      box(pxl);
+      popMatrix();
+    }
     if (isCrossed) {
       int index = step % crossStream.length;
       pushMatrix();
@@ -71,7 +75,7 @@ class Stream {
       fill(radWaste);
       box(pxl);
       popMatrix();
-      if (index == 0)hittedWater = true;//this has to be improved
+      if (index == 0)hittedWater = true;
       else hittedWater = false;
     }
   }

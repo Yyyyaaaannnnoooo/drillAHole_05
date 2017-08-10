@@ -73,25 +73,4 @@ class Particle {
       a.playNotes(1);
     }
   }
-
-
-  //void removalAnimation(PVector pos, int radius) {
-  //  println(radius);
-  //  noFill();
-  //  stroke(0, 255, 0);
-  //  strokeWeight(20);
-  //  pushMatrix();
-  //  translate(pos.x, pos.y, pos.z);
-  //  beginShape(POINTS);
-  //  for (int i = 0; i < 8; i ++) {
-  //    float angle = map ( i, 0, 8, 0, TWO_PI);
-  //    float x = (cos(angle) * radius);
-  //    float y = (sin(angle) * radius);
-  //    vertex(x, y);
-  //  }
-  //  endShape();
-  //  popMatrix();
-  //  ellipse(0, 0, 500, 500);
-  //  if (radius > 50)startRemovalAnimation = false;
-  //}
 }

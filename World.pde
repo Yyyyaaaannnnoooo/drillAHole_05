@@ -6,12 +6,13 @@ class World {
   Stream driller;
   Stream waterStream;
   Facility [] monoliths = new Facility[4];
+  Facility vault, radioactiveLager;
   //Particle [] p;
   //Electron[] el;
   Paddle paddle;
   int originX, originY;
-  int cols, rows, w = 800, h = displayHeight;
-  int posX = 0, posY = 0, cell = 10;
+  int cols, rows, w = 800, h = height - 50;
+  int posX = 0, posY = 0, cell = 10, posFacilityX, posFacilityY;
   int drillDeeper = 0, drillDepth = -350, actualStream = 0, ionCount = 0, atomNum = 30;
   int iconNumber = 15;
   float wave = 0, waveCount = 0, resetRotation = 1, rotX = PI / 3, rotZ = -PI / 3;
@@ -28,17 +29,23 @@ class World {
       icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     }
     //float posX, float posY, float posZ, float trX, float trY, float trZ
+    //the monoliths sorrounding the vault
+    posFacilityX = (originX + 20) * cell;
+    int w = 5 * cell;
+    int r = 7 * cell;
+    posFacilityY = w + r;
     for (int i = 0; i < monoliths.length; i++) {
-      int w = 25;
-      int r = cell * 7;
       float angle = map(i, 0, monoliths.length, 0, TWO_PI);
-      int x = originX * cell + round(r * cos(angle));
-      int y = w + r + round(r * sin(angle));
-      monoliths[i] = new Facility(x, y, 0, w, 70, 35, angle, drilling, true, true);
+      int x = posFacilityX + round(r * cos(angle));
+      int y = posFacilityY + round(r * sin(angle));
+      monoliths[i] = new Facility(x, y, 0, w, 90, 35, angle, drilling, color(0), true, true);
     }
-    paddle = new Paddle();
+    //the vault
+    vault = new Facility (posFacilityX, posFacilityY, 15, w, 45, 30, 0, color(0), radWaste, true, false);
+    radioactiveLager = new Facility(originX * cell, ((originY - 30) * cell), drillDepth, 150, 350, 50, 0, color(0), radWaste, true, false);
     ///Water stream and the driller
     waterStream = new Stream(originX * cell, 0, -200, originX * cell, originY * cell, 0, water, true);
+    paddle = new Paddle();
   }
 
   void update() {
@@ -79,10 +86,13 @@ class World {
   void show() { 
     // worldRotation();    
     terrain();
-    paddle.show();
+    if (gameStart)paddle.show();
     for (Particle i : ion)i.show();
     if (gameStart)for (Icon i : icon)i.show();
     for (Facility f : monoliths)f.show();
+    vault.show();
+    radioactiveLager.show();
+    facilityConnection(vault, radioactiveLager, radWaste);
   }
   ///the terrain of the world
   void terrain() {
@@ -120,6 +130,20 @@ class World {
     endShape(); 
     //animate the lake
     waveCount += 0.05;
+  }
+  //the connection bewtween the monolith on the surface and the lager underneath
+  void facilityConnection(Facility f1, Facility f2, color c) {
+    noFill();
+    stroke(c);
+    strokeWeight(7);
+    pushMatrix();
+    beginShape();
+    vertex(f1.x, f1.y, f1.z);
+    vertex(f1.x, f1.y, f2.z);
+    vertex(f2.x, f1.y, f2.z);
+    vertex(f2.x, f2.y, f2.z);
+    endShape();
+    popMatrix();
   }
   //set the world in perspective and back to topo view
   void worldRotation() {

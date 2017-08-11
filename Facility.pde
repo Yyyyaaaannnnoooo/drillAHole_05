@@ -2,8 +2,8 @@ class Facility {
   int x, y, z;
   float w, h, d, r;
   boolean IF, IM;
-  color c;
-  Facility(int xx, int yy, int zz, float ww, float hh, float dd, float rotation, color cc, boolean isFill, boolean isMonolith) {
+  color cFill, cStroke;
+  Facility(int xx, int yy, int zz, float ww, float hh, float dd, float rotation, color cf, color cs, boolean isFill, boolean isMonolith) {
     x = xx;
     y = yy;
     z = zz;
@@ -11,7 +11,8 @@ class Facility {
     h = hh;
     d = dd;
     r = rotation;
-    c = cc;
+    cFill = cf;
+    cStroke = cs;
     IF = isFill;
     IM = isMonolith;
   }
@@ -19,14 +20,14 @@ class Facility {
     x = posX;
     y = posY;
   }
-  void show() {
+  void show() {      
+    strokeWeight(3);
     if (IF) {
-      stroke(0);
-      fill(c);
+      stroke(cStroke);
+      fill(cFill);
     } else {
       noFill();
-      strokeWeight(3);
-      stroke(0);
+      stroke(cStroke);
     }
     if (IM)monolith();
     else cubicFacility();

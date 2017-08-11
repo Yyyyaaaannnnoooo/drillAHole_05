@@ -7,12 +7,13 @@ class World {
   Stream waterStream;
   Facility [] monoliths = new Facility[4];
   Facility vault, radioactiveLager;
+  Facility [] drillingMachine = new Facility[2];
   //Particle [] p;
   //Electron[] el;
   Paddle paddle;
   int originX, originY;
   int cols, rows, w = 800, h = height - 50;
-  int posX = 0, posY = 0, cell = 10, posFacilityX, posFacilityY;
+  int posX = 0, posY = 0, cell = 10, posFacilityX, posFacilityY, drillerPosX, drillerPosY;
   int drillDeeper = 0, drillDepth = -350, actualStream = 0, ionCount = 0, atomNum = 30;
   int iconNumber = 15;
   float wave = 0, waveCount = 0, resetRotation = 1, rotX = PI / 3, rotZ = -PI / 3;
@@ -24,7 +25,9 @@ class World {
     cols = w / cell;
     rows = h / cell;
     originX = round(cols * 0.5);
-    originY = round(rows * 0.75);
+    originY = round(rows * 0.80);
+    drillerPosX = originX * cell;
+    drillerPosY = (rows / 2) * cell;
     for (int i = 0; i < iconNumber; i++) {
       icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     }
@@ -43,9 +46,11 @@ class World {
     //the vault
     vault = new Facility (posFacilityX, posFacilityY, 15, w, 45, 30, 0, color(0), radWaste, true, false);
     radioactiveLager = new Facility(originX * cell, ((originY - 30) * cell), drillDepth, 150, 350, 50, 0, color(0), radWaste, true, false);
-    ///Water stream and the driller
+    //the driller
+    for(int i = 0; i < drillingMachine.length; i++)drillingMachine[i] = new Facility(drillerPosX, drillerPosY, 0, 25, 120, 50, i * PI, color(0), drilling, true, true);
+    ///Water stream
     waterStream = new Stream(originX * cell, 0, -200, originX * cell, originY * cell, 0, water, true);
-    paddle = new Paddle();
+    paddle = new Paddle(floor(rows * 0.6) * cell);
   }
 
   void update() {
@@ -90,6 +95,7 @@ class World {
     for (Particle i : ion)i.show();
     if (gameStart)for (Icon i : icon)i.show();
     for (Facility f : monoliths)f.show();
+    for(Facility f : drillingMachine)f.show();
     vault.show();
     radioactiveLager.show();
     facilityConnection(vault, radioactiveLager, radWaste);
@@ -110,8 +116,8 @@ class World {
         //stroke(c);
         //drawing the lake and a wavy texture
         float d1 = dist(x, y, originX, originY); 
-        float d2 = dist(x, y, cols * 0.35, rows * 0.8); 
-        float d3 = dist(x, y, cols * 0.65, rows * 0.7); 
+        float d2 = dist(x, y, cols * 0.35, rows * 0.82); 
+        float d3 = dist(x, y, cols * 0.65, rows * 0.79); 
         if (d1 < 15 || d2 < 8 || d3 < 10) {
           fill(water); 
           wave = sin(waveCount) * n;
@@ -163,13 +169,13 @@ class World {
   }
 
   void drillinganimation() {
-    int decrement = 1;
+    int decrement = 2;
     stroke(drilling);
     strokeWeight(5);
-    line(originX * cell, rows / 2 * cell, 0, originX * cell, rows / 2 * cell, drillDeeper);
+    line(drillerPosX, drillerPosY, 0, originX * cell, rows / 2 * cell, drillDeeper);
     if (drillDeeper >= drillDepth) drillDeeper -= decrement;
     if (drillDeeper == drillDepth) {
-      driller = new Stream(originX * cell, rows / 2 * cell, drillDepth, drilling, false);
+      driller = new Stream(drillerPosX, drillerPosY, drillDepth, drilling, false);
       drillDeeper = drillDepth;
       //decrement = 0;
     }
@@ -188,11 +194,12 @@ class World {
     if (driller != null && driller.hittedWater && p.size() < atomNum) {
       blink = true;
       initAtom(5);
-      //when the radWaste hits the water pond start the music
-      if (playSound) {
-        BGSound();
-        playSound = false;
-      }
+      //when the radWaste hits the water rise the volume
+      float inc = (abs(volume) + 10) / (atomNum / 5);
+      println(inc);
+      setVolume += inc;      
+      BG.shiftGain(BG.getGain(), setVolume, 500);
+      println(BG.getGain());
     }
     if (p.size() == atomNum)reset = true;
     //update

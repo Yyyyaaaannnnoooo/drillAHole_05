@@ -2,9 +2,10 @@ class Paddle {
   float w = 100;
   int h = 40;
   int d = 20;
-  float x = 520, y = 480;
-  Paddle() {
+  float x = 520, y = 0;
+  Paddle(int posY) {
     rectMode(CENTER);
+    y = posY;
   }
   void update(float pos) {
     x = pos;

@@ -1,6 +1,6 @@
 class Facility {
-  int x, y, z;
-  float w, h, d, r;
+  int x, y;
+  float z, w, h, d, r;
   boolean IF, IM;
   color cFill, cStroke;
   Facility(int xx, int yy, int zz, float ww, float hh, float dd, float rotation, color cf, color cs, boolean isFill, boolean isMonolith) {

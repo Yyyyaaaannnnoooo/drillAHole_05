@@ -66,7 +66,7 @@ class Particle {
     if (p.pos.x < pad.x + pad.w && p.pos.x > pad.x - pad.w && p.pos.y > pad.y - pad.h / 2 && p.pos.y < pad.y + pad.h / 2) {
       p.removeParticle = true;
       pad.w -= 0.5;
-      a.playNotes(1);
+      //a.playNotes(1);
     }
   }
 }

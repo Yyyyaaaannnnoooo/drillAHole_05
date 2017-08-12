@@ -9,11 +9,12 @@ class World {
   Facility vault, radioactiveLager;
   Facility [] drillingMachine = new Facility[2];
   Paddle paddle;
+  int killedLivingCreatures = 0;
   int originX, originY;
   int cols, rows, w = 800, h = height - 50;
-  int posX = 0, posY = 0, cell = 10, posFacilityX, posFacilityY, drillerPosX, drillerPosY;
+  int posX = 0, posY = 0, cell = 10, posFacilityX, posFacilityY, drillerPosX, drillerPosY, drillAnimationY = 0;
   int drillDeeper = 0, drillDepth = -350, atomNum = 30;
-  int iconNumber = 15;
+  int iconNumber = 30;
   float wave = 0, waveCount = 0, resetRotation = 1, rotX = PI / 3, rotZ = -PI / 3;
   boolean isDrilling = false;
   boolean bottom = false, reset = false;
@@ -44,7 +45,7 @@ class World {
     vault = new Facility (posFacilityX, posFacilityY, 15, w, 45, 30, 0, black, radWaste, true, false);
     radioactiveLager = new Facility(originX * cell, ((originY - 30) * cell), drillDepth, 150, 350, 50, 0, black, radWaste, true, false);
     //the driller
-    for (int i = 0; i < drillingMachine.length; i++)drillingMachine[i] = new Facility(drillerPosX, drillerPosY, 0, 25, 120, 50, i * PI, black, drilling, true, true);
+    for (int i = 0; i < drillingMachine.length; i++)drillingMachine[i] = new Facility(drillerPosX, 0, 25, 25, 120, 50, i * PI, black, drilling, true, true);
     //adds ome spacing between the icons
     int index = 0;
     while (index < iconNumber) {
@@ -52,8 +53,8 @@ class World {
       int y = topGutter + floor(random(iconRows)) * iconCell;
       float d1 = dist(x, y, posFacilityX, posFacilityY); //check distance between icon and vault
       float d2 = dist(x, y, drillerPosX, drillerPosY);//check distance between driller and icon
-        if (icon.size() >= 1) {
-        while (checkPos(x, y, icon) && d1 > r * 1.5 && d2 > 50) {
+      if (icon.size() >= 1) {
+        while (checkPos(x, y, icon) && d1 > r * 1.1 && d2 > 50) {
           icon.add(new Icon(x, y));
           index++;
         }
@@ -74,7 +75,7 @@ class World {
       float d = dist(xx, yy, comparator.pos.x, comparator.pos.y);
       if (d < 20)boolCounter ++;
     }
-    if(boolCounter > 0)return false;
+    if (boolCounter > 0)return false;
     else return true;
   }
 
@@ -91,21 +92,28 @@ class World {
       Icon ic = icon.get(i);
       if (ic.dead)icon.remove(i);
     }
-    //while loop?
+    //addinc new icons when they die
     while (icon.size() < iconNumber) {
       int x = leftGutter + floor(random(iconCols)) * iconCell;
       int y = topGutter + floor(random(iconRows)) * iconCell;
       float d1 = dist(x, y, posFacilityX, posFacilityY); //check distance between icon and vault
       float d2 = dist(x, y, drillerPosX, drillerPosY);//check distance between driller and icon
-      while (checkPos(x, y, icon) && d1 > r * 1.5 && d2 > 50)icon.add(new Icon(x, y));
+      while (checkPos(x, y, icon) && d1 > r * 1.1 && d2 > 50) {
+        icon.add(new Icon(x, y));
+        killedLivingCreatures++;
+      }
     }
-    //if (icon.size() < iconNumber)icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     //radiation shooter
     if (frameCount % 30 == 0 && ion.size() < 10) {
       //insert here a for loop that shoots as many ions as
       //high the radition level is based on time 2017 – 12017
-      Icon target = icon.get(floor(random(icon.size())));
-      if (target.health > 0)ion.add(new Particle(originX * cell, originY * cell, 0, target.pos.x, target.pos.y, target.pos.z, true));
+      int y = year();
+      int yearsOfRadioactivity = 12017 - y;
+      int shootingIons = floor(map(yearsOfRadioactivity, 10000, 0, 100, 0));
+      for (int i = 0; i < shootingIons; i++) {
+        Icon target = icon.get(floor(random(icon.size())));
+        if (target.health > 0)ion.add(new Particle(originX * cell, originY * cell, 0, target.pos.x, target.pos.y, target.pos.z, true));
+      }
     }
     for (Particle i : ion) {
       i.update();      
@@ -136,7 +144,6 @@ class World {
     for (int y = 0; y < rows; y++) {
       float xOff = 0; 
       for (int x = 0; x < cols; x++) {
-        int index = x + cols * y; 
         float n = map(noise(xOff, yOff), 0, 1, -10, 10); 
         float amp = noise(xOff, yOff) > 0.5 ? 0 : 1; 
         color c = lerpColor(land, grass, amp); 
@@ -155,8 +162,7 @@ class World {
         }
         vertex(x * cell, y * cell, wave); 
         vertex(x * cell, (y + 1) * cell, 0); 
-        vertex((x + 1) * cell, (y + 1) * cell, 0); 
-        //vertex((x + 1) * cell, y  * cell, n);
+        vertex((x + 1) * cell, (y + 1) * cell, 0);
         xOff += inc;
       }
       yOff += inc;
@@ -195,17 +201,30 @@ class World {
       rotZ += radians(resetRotation);
     }
   }
-
+  //starting animation where the driller drills
   void drillinganimation() {
     int decrement = 2;
-    stroke(drilling);
-    strokeWeight(5);
-    line(drillerPosX, drillerPosY, 0, originX * cell, rows / 2 * cell, drillDeeper);
-    if (drillDeeper >= drillDepth) drillDeeper -= decrement;
-    if (drillDeeper == drillDepth) {
-      driller = new Stream(drillerPosX, drillerPosY, drillDepth, drilling, false);
-      drillDeeper = drillDepth;
-      //decrement = 0;
+    drillAnimationY += cell / 4;
+    if (drillAnimationY <= drillerPosY) {
+      for (Facility f : drillingMachine)f.update(drillerPosX, drillAnimationY);
+      rectMode(CENTER);
+      strokeWeight(3);
+      stroke(radWaste);
+      fill(drilling);
+      pushMatrix();
+      translate(0, 0, 2);
+      rect(drillerPosX, drillAnimationY, drillingMachine[0].w * 2, drillingMachine[0].w * 2);
+      popMatrix();
+    } else if (drillingMachine[0].z >= 0)for (Facility f : drillingMachine)f.z -= 1;
+    if (drillingMachine[0].y >= drillerPosY && drillingMachine[0].z <= 0) {
+      stroke(drilling);
+      strokeWeight(5);
+      line(drillerPosX, drillerPosY, 0, originX * cell, rows / 2 * cell, drillDeeper);
+      if (drillDeeper >= drillDepth) drillDeeper -= decrement;
+      if (drillDeeper == drillDepth) {
+        driller = new Stream(drillerPosX, drillerPosY, drillDepth, drilling, false);
+        drillDeeper = drillDepth;
+      }
     }
     //driller and waterStream update
     waterStream.update();
@@ -223,11 +242,9 @@ class World {
       blink = true;
       initAtom(5);
       //when the radWaste hits the water rise the volume
-      float inc = (abs(volume) + 10) / (atomNum / 5);
-      //println(inc);
+      float inc = (abs(volume) + 1) / (atomNum / 5);
       setVolume += inc;      
       BG.shiftGain(BG.getGain(), setVolume, 500);
-      //println(BG.getGain());
     }
     if (p.size() == atomNum)reset = true;
     //update

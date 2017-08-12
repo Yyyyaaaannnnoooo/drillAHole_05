@@ -1,5 +1,6 @@
 World world;
 Audio a;
+PFont mono;
 int r = 200;
 float BGcount = 0, volume = -20.0, setVolume = volume;
 boolean gameStart = false, blink = false, pause = false, playSound = true;
@@ -16,6 +17,10 @@ void setup() {
   a = new Audio();
   background = new Minim(this);
   BG = background.loadFile("DescenteInfinie_03.aiff", 2048);
+  mono = loadFont("SourceCodePro-Black-24.vlw");
+  textAlign(CENTER);
+  textSize(24);
+  textFont(mono);
 }
 void draw() {
   lights(); 
@@ -24,14 +29,24 @@ void draw() {
   //blinking red for drama!
   if (blink)background(abs(sin(BGcount)) * 150, 0, 0);
   //draws the frame around the game
-  frame();
+  frame();  
+  if (pause){
+    pushMatrix();
+    translate(width / 2, height / 2, 200);
+    rectMode(CENTER);
+    fill(black);
+    rect(0, 20, 450, 100);    
+    fill(white);
+    text("DO YOU WANT TO LEAVE THE GAME?\nY/N\nDIED CREATURES: " + world.killedLivingCreatures, 0, 0);
+    popMatrix();
+  }
   if (gameStart && !pause) {
     world.update();
   }
   world.worldRotation();
+  world.show();
   world.drillinganimation();
   world.atomAnimation();
-  world.show();
   BGcount += 0.05;
   surface.setTitle(str(frameRate));
   if (playSound) {
@@ -67,4 +82,9 @@ void frame() {
 
 void keyPressed() {
   if (key == ' ') pause = !pause;
+  if (world.paddle.w <= 20)if (key == 'r')world.paddle.w = 100;
+  if (pause) {
+    if (key == 'y')exit();
+    if (key == 'n')pause = !pause;
+  }
 }

@@ -30,10 +30,6 @@ class Particle {
     count++;
     particleLife--;
     if (particleLife < 0) removeParticle = true;
-    //if (startRemovalAnimation) {
-    //  removalAnimation(pos, removalAnimationRadius);
-    //  removalAnimationRadius ++;
-    //}
   }
 
   void show() {

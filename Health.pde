@@ -1,8 +1,7 @@
 class Health {
-  PImage[] emotions;// = new PImage[3];
+  PImage[] emotions;
   float speed = 2, x, y;
   int life = 30;
-  private String fileName = "", directory = dataPath("")+"/emotions/";
   PVector pos, vel, acc, target;
   boolean showAnimation = true;
   Health(float x_, float y_) {
@@ -40,7 +39,6 @@ class Health {
   void show(int index) {
     if (showAnimation) {
       imageMode(CENTER);
-      //for (int i = 0; i < emotions.length; i++)image(emotions[i], emotions[i].height / 2, emotions[i].width * i);
       pushMatrix();
       translate(pos.x, pos.y);
       image(emotions[index], 0, 0);

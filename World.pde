@@ -8,19 +8,19 @@ class World {
   Facility [] monoliths = new Facility[4];
   Facility vault, radioactiveLager;
   Facility [] drillingMachine = new Facility[2];
-  //Particle [] p;
-  //Electron[] el;
   Paddle paddle;
   int originX, originY;
   int cols, rows, w = 800, h = height - 50;
   int posX = 0, posY = 0, cell = 10, posFacilityX, posFacilityY, drillerPosX, drillerPosY;
-  int drillDeeper = 0, drillDepth = -350, actualStream = 0, ionCount = 0, atomNum = 30;
+  int drillDeeper = 0, drillDepth = -350, atomNum = 30;
   int iconNumber = 15;
   float wave = 0, waveCount = 0, resetRotation = 1, rotX = PI / 3, rotZ = -PI / 3;
   boolean isDrilling = false;
   boolean bottom = false, reset = false;
   PVector position;
-  //Check all the lake references
+  int iconCell = 50, iconCols = (w - (iconCell * 2)) / iconCell, iconRows = (h / 2) / iconCell;
+  int topGutter = cell * 5; //the space from the top of the world
+  int leftGutter = iconCell;
   World() {
     cols = w / cell;
     rows = h / cell;
@@ -28,9 +28,6 @@ class World {
     originY = round(rows * 0.80);
     drillerPosX = originX * cell;
     drillerPosY = (rows / 2) * cell;
-    for (int i = 0; i < iconNumber; i++) {
-      icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
-    }
     //float posX, float posY, float posZ, float trX, float trY, float trZ
     //the monoliths sorrounding the vault
     posFacilityX = (originX + 20) * cell;
@@ -41,16 +38,44 @@ class World {
       float angle = map(i, 0, monoliths.length, 0, TWO_PI);
       int x = posFacilityX + round(r * cos(angle));
       int y = posFacilityY + round(r * sin(angle));
-      monoliths[i] = new Facility(x, y, 0, w, 90, 35, angle, drilling, color(0), true, true);
+      monoliths[i] = new Facility(x, y, 0, w, 90, 35, angle, white, black, true, true);
     }
     //the vault
-    vault = new Facility (posFacilityX, posFacilityY, 15, w, 45, 30, 0, color(0), radWaste, true, false);
-    radioactiveLager = new Facility(originX * cell, ((originY - 30) * cell), drillDepth, 150, 350, 50, 0, color(0), radWaste, true, false);
+    vault = new Facility (posFacilityX, posFacilityY, 15, w, 45, 30, 0, black, radWaste, true, false);
+    radioactiveLager = new Facility(originX * cell, ((originY - 30) * cell), drillDepth, 150, 350, 50, 0, black, radWaste, true, false);
     //the driller
-    for(int i = 0; i < drillingMachine.length; i++)drillingMachine[i] = new Facility(drillerPosX, drillerPosY, 0, 25, 120, 50, i * PI, color(0), drilling, true, true);
+    for (int i = 0; i < drillingMachine.length; i++)drillingMachine[i] = new Facility(drillerPosX, drillerPosY, 0, 25, 120, 50, i * PI, black, drilling, true, true);
+    //adds ome spacing between the icons
+    int index = 0;
+    while (index < iconNumber) {
+      int x = leftGutter + floor(random(iconCols)) * iconCell;
+      int y = topGutter + floor(random(iconRows)) * iconCell;
+      float d1 = dist(x, y, posFacilityX, posFacilityY); //check distance between icon and vault
+      float d2 = dist(x, y, drillerPosX, drillerPosY);//check distance between driller and icon
+        if (icon.size() >= 1) {
+        while (checkPos(x, y, icon) && d1 > r * 1.5 && d2 > 50) {
+          icon.add(new Icon(x, y));
+          index++;
+        }
+      } else {
+        icon.add(new Icon(x, y));
+        index++;
+      }
+    }
     ///Water stream
     waterStream = new Stream(originX * cell, 0, -200, originX * cell, originY * cell, 0, water, true);
     paddle = new Paddle(floor(rows * 0.6) * cell);
+  }
+  //this function checks if a new icon overlaps any previous
+  private boolean checkPos(int xx, int yy, ArrayList <Icon> obj) {
+    int boolCounter = 0;
+    for (int i = 0; i < obj.size(); i++) {
+      Icon comparator = obj.get(i);
+      float d = dist(xx, yy, comparator.pos.x, comparator.pos.y);
+      if (d < 20)boolCounter ++;
+    }
+    if(boolCounter > 0)return false;
+    else return true;
   }
 
   void update() {
@@ -59,10 +84,6 @@ class World {
       Particle p = ion.get(i);
       if (p.removeParticle) {
         ion.remove(i);
-        //position = new PVector(ion.get(i).pos.x, ion.get(i).pos.y, ion.get(i).pos.z);
-        ////p.startRemovalAnimation = true;
-        ////p.removalAnimationRadius = 50;
-        //p.removalAnimation(position, 50);
       }
     }
 
@@ -70,7 +91,15 @@ class World {
       Icon ic = icon.get(i);
       if (ic.dead)icon.remove(i);
     }
-    if (icon.size() < iconNumber)icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
+    //while loop?
+    while (icon.size() < iconNumber) {
+      int x = leftGutter + floor(random(iconCols)) * iconCell;
+      int y = topGutter + floor(random(iconRows)) * iconCell;
+      float d1 = dist(x, y, posFacilityX, posFacilityY); //check distance between icon and vault
+      float d2 = dist(x, y, drillerPosX, drillerPosY);//check distance between driller and icon
+      while (checkPos(x, y, icon) && d1 > r * 1.5 && d2 > 50)icon.add(new Icon(x, y));
+    }
+    //if (icon.size() < iconNumber)icon.add(new Icon(floor(random(cols)) * cell, floor(random(rows * 0.1, rows * 0.5)) * cell));
     //radiation shooter
     if (frameCount % 30 == 0 && ion.size() < 10) {
       //insert here a for loop that shoots as many ions as
@@ -95,7 +124,7 @@ class World {
     for (Particle i : ion)i.show();
     if (gameStart)for (Icon i : icon)i.show();
     for (Facility f : monoliths)f.show();
-    for(Facility f : drillingMachine)f.show();
+    for (Facility f : drillingMachine)f.show();
     vault.show();
     radioactiveLager.show();
     facilityConnection(vault, radioactiveLager, radWaste);
@@ -108,7 +137,6 @@ class World {
       float xOff = 0; 
       for (int x = 0; x < cols; x++) {
         int index = x + cols * y; 
-        float steepness = map(index, 0, rows * cols, 25, 0); 
         float n = map(noise(xOff, yOff), 0, 1, -10, 10); 
         float amp = noise(xOff, yOff) > 0.5 ? 0 : 1; 
         color c = lerpColor(land, grass, amp); 
@@ -196,10 +224,10 @@ class World {
       initAtom(5);
       //when the radWaste hits the water rise the volume
       float inc = (abs(volume) + 10) / (atomNum / 5);
-      println(inc);
+      //println(inc);
       setVolume += inc;      
       BG.shiftGain(BG.getGain(), setVolume, 500);
-      println(BG.getGain());
+      //println(BG.getGain());
     }
     if (p.size() == atomNum)reset = true;
     //update
@@ -221,46 +249,5 @@ class World {
     //add electrons
     //electrons
     el.add(new Electron(random(TWO_PI), random(TWO_PI), originX * cell, originY * cell, 50, 150, 50));
-  }
-
-  void mouseClicked() {
-    isDrilling = true; 
-    //drillDeeper -= 50;
-    //Stream d = drill.get(actualStream);
-    //if (d.bottom) {
-    //  drill.add(new Stream(posX * cell, posY * cell, -50, drilling));        
-    //  d.bottom = false;
-    //  actualStream++;
-    //  drillDeeper = -50;
-    //}
-    //if (drillDeeper < drillDepth) {
-    //  drillDeeper = drillDepth;
-    //  d.bottom = true;
-    //  for (int i = 0; i < lake.waterStream.length; i++) {
-    //    d.crossingStream(d, lake.waterStream[i]);
-    //  }
-    //}
-  }
-
-  void keyPressed() {
-    ///inverted//
-    if (key == CODED) {
-      if (keyCode == UP) {
-        posX++; 
-        if (posX > rows)posX = rows;
-      }
-      if (keyCode == DOWN) {
-        posX--; 
-        if (posX < 0)posX = 0;
-      }
-      if (keyCode == LEFT) {
-        posY--; 
-        if (posY < 0)posX = 0;
-      }
-      if (keyCode == RIGHT) {
-        posY++; 
-        if (posY > cols)posY = cols;
-      }
-    }
   }
 }

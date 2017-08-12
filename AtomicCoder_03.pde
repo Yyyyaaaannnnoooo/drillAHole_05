@@ -1,10 +1,9 @@
-////correct pwindow or remove it
 World world;
 Audio a;
 int r = 200;
 float BGcount = 0, volume = -20.0, setVolume = volume;
 boolean gameStart = false, blink = false, pause = false, playSound = true;
-color water = color(0, 150, 255), drilling = color(255), radWaste = color(0, 255, 0), 
+color water = color(0, 150, 255), white = color(255), black = color(0), drilling = color(255, 0, 0), radWaste = color(0, 255, 0), 
   grass = color(10, 255, 50), land = color(180, 100, 10);
 void settings() {
   int theHeight = floor((displayHeight - 50) / 100) * 100;
@@ -24,6 +23,7 @@ void draw() {
   background(0);  
   //blinking red for drama!
   if (blink)background(abs(sin(BGcount)) * 150, 0, 0);
+  //draws the frame around the game
   frame();
   if (gameStart && !pause) {
     world.update();
@@ -38,8 +38,6 @@ void draw() {
     BGSound();
     playSound = false;
   }
-  //println(BG.getVolume());
-  //BG.setVolume(0.0);
 }
 
 void BGSound() {  

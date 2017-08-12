@@ -79,15 +79,6 @@ class Stream {
       else hittedWater = false;
     }
   }
-
-  ///Drilling function 
-  void drillDrill(int posX, int posY, int d) {
-    stream = new ArrayList <PVector>(0);
-    for (float i = d; i < 0; i += 5) {
-      stream.add(new PVector(posX, posY, i));
-    }
-  }
-
   ///function that generates a new path when to streams are crossing///
   void crossingStream(Stream s1, Stream s2) {
     int s1End = 0, s2Begin = 0;
